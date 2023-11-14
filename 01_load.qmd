@@ -1,0 +1,27 @@
+---
+title: "01_load"
+format: html
+editor: visual
+---
+
+## Load Data
+
+```{r}
+library("tidyverse")
+```
+
+```{r}
+raw_dir <- "/group_08_project/data/_raw/"
+data_file <- "GSE182951_Counts_All_Samples.xlsx"
+data_loc <- "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE182nnn/GSE182951/suppl/GSE182951%5FCounts%5FAll%5FSamples%2Exlsx"
+
+if( !dir.exists(raw_dir) ){
+  dir.create(path = raw_dir)
+}
+if( !file.exists(str_c(raw_dir, data_file)) ){
+  download.file(
+    url = str_c(data_loc),
+    destfile = str_c(raw_dir, data_file))
+}
+load(file = str_c(raw_dir, data_file))
+```
