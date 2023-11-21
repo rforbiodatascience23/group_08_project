@@ -51,4 +51,5 @@ meta_data <- data.frame(ID = 1:60) |>
   
 write_csv(x = meta_data,
           file = "data/meta_data.csv")
+
 ```

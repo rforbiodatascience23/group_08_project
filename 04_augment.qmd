@@ -18,6 +18,7 @@ library(tidyverse)
 ## Load
 ```{r}
 data <- read_csv("data/full_expression_data.csv")
+
 ```
 
 # Calculate the logFC for each gene expression
