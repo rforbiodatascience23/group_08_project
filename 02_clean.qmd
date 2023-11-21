@@ -46,7 +46,9 @@ expression_data_long <- expression_data |>
                values_to = "Count") |>
   
   # Change to sample number
-  mutate(Sample = as.numeric(str_sub(Sample, start = 7, end = 9))) |>  
+  mutate(Sample = as.numeric(str_sub(Sample, 
+                                     start = 7, 
+                                     end = 9))) |>  
   
   #Rename Name column 
   rename("Gene" = "Name")
@@ -55,7 +57,6 @@ expression_data_long
 ```
 
 # Joining meta data and expression data
-
 
 ```{r}
 #| label: Metadata added
@@ -67,7 +68,7 @@ full_expression_data <- inner_join(x = expression_data_long,
                                    y = meta_data, 
                                    join_by(Sample == ID))
 
-write_csv(full_expression_data, "data/full_expression_data.csv")
+write_csv(full_expression_data, 
+          "data/full_expression_data.csv")
 
 ```
-

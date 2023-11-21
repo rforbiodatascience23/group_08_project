@@ -7,6 +7,8 @@ editor: visual
 ## Load Data
 
 ```{r}
+#| message: false
+
 library("tidyverse")
 library("readxl")
 ```
@@ -41,10 +43,10 @@ meta_data <- data.frame(ID = 1:60) |>
   mutate(Treatment = case_when(str_ends(ID,"[13579]") ~ "pre_treatment",
                                str_ends(ID,"[^13579]") ~ "post_treatment")) |>
   # Adding corresponding Person ID
-  mutate(person_ID = case_when(Treatment == "pre_treatment" ~ (ID+1)/2,
+  mutate(subject_ID = case_when(Treatment == "pre_treatment" ~ (ID+1)/2,
                          Treatment == "post_treatment" ~ ID/2)) |> 
-  mutate(person_ID = case_when(person_ID < 10 ~ str_c("person_0", person_ID),
-                                   person_ID >= 10 ~ str_c("person_", person_ID))) |> 
+  mutate(subject_ID = case_when(subject_ID < 10 ~ str_c("subject_0", subject_ID),
+                                   subject_ID >= 10 ~ str_c("subject_", subject_ID))) |> 
   #Adding pCR status
   mutate(pCR_status = case_when(ID <= 12 ~ "pCR",
                                 ID > 12 ~ "no_pCR"))
