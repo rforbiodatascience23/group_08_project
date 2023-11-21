@@ -8,20 +8,47 @@ editor: visual
 
 ```{r}
 library("tidyverse")
+library("readxl")
 ```
 
 ```{r}
-raw_dir <- "/group_08_project/data/_raw/"
+raw_dir <- "data/_raw/"
 data_file <- "GSE182951_Counts_All_Samples.xlsx"
-data_loc <- "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE182nnn/GSE182951/suppl/GSE182951%5FCounts%5FAll%5FSamples%2Exlsx"
+data_loc <- "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE182951&format=file&file=GSE182951%5FCounts%5FAll%5FSamples%2Exlsx"
 
-if( !dir.exists(raw_dir) ){
+if (!dir.exists(raw_dir)){
   dir.create(path = raw_dir)
-}
-if( !file.exists(str_c(raw_dir, data_file)) ){
+  }
+if (!file.exists(str_c(raw_dir, data_file))){
   download.file(
     url = str_c(data_loc),
     destfile = str_c(raw_dir, data_file))
-}
-load(file = str_c(raw_dir, data_file))
+  }
+
+expression_data = read_excel(str_c(raw_dir, data_file))
+```
+
+# **Creating the metadata**
+
+Based on the paper we know that:
+
+Each sample is paired: 1 - 2, 3 - 4, etc. Each pair is 1 = pre-treatment, 2 = post-treatment. Samples: 1-12 belong to group A - pCR, the rest belong to group B - no pCR.
+
+```{r}
+# For fun lets add more:
+meta_data <- data.frame(ID = 1:60) |> 
+  #Adding pre/post treatment to the dataset
+  mutate(Treatment = case_when(str_ends(ID,"[13579]") ~ "pre_treatment",
+                               str_ends(ID,"[^13579]") ~ "post_treatment")) |>
+  # Adding corresponding Person ID
+  mutate(person_ID = case_when(Treatment == "pre_treatment" ~ (ID+1)/2,
+                         Treatment == "post_treatment" ~ ID/2)) |> 
+  mutate(person_ID = case_when(person_ID < 10 ~ str_c("person_0", person_ID),
+                                   person_ID >= 10 ~ str_c("person_", person_ID))) |> 
+  #Adding pCR status
+  mutate(pCR_status = case_when(ID <= 12 ~ "pCR",
+                                ID > 12 ~ "no_pCR"))
+  
+write_csv(x = meta_data,
+          file = "data/meta_data.csv")
 ```
