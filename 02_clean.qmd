@@ -3,3 +3,72 @@ title: "02_clean"
 format: html
 editor: visual
 ---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+# First we explore the data
+#View(expression_data)
+expression_data |> 
+  sample_n(10)
+```
+
+Column:
+
+**Name** which include the gene names.
+
+**Identifier** which includes a link to the ENSG identifier for the gene.
+
+Then 40 columns for each sample. They start with 20756_0XX_genes - Total counts. Where XX is the number of the sample
+
+So we need to clean the data and change it into tidy data meaning:
+
+Columns = variables
+
+Rows = Observations
+
+Each cell = values.
+
+**Cleaning:**
+
+-   Create tidy data
+
+-   Clean up names
+
+```{r}
+expression_data_long <- expression_data |> 
+  
+  #Pivot longer to make into tidy data set.
+  pivot_longer(cols = starts_with("20756"),
+               names_to = "Sample",
+               values_to = "Count") |>
+  
+  # Change to sample number
+  mutate(Sample = as.numeric(str_sub(Sample, 
+                                     start = 7, 
+                                     end = 9))) |>  
+  
+  #Rename Name column 
+  rename("Gene" = "Name")
+
+expression_data_long
+```
+
+# Joining meta data and expression data
+
+```{r}
+#| label: Metadata added
+
+
+# Connect the expression dataset Sample with the metadata set ID
+
+full_expression_data <- inner_join(x = expression_data_long, 
+                                   y = meta_data, 
+                                   join_by(Sample == ID))
+
+write_csv(full_expression_data, 
+          "data/full_expression_data.csv")
+
+```

@@ -3,3 +3,5 @@ title: "03_describe"
 format: html
 editor: visual
 ---
+
+https://r4bds.github.io/lab05.html#creating-the-micro-report
