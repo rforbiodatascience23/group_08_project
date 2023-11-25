@@ -14,7 +14,7 @@ library("readxl")
 ```
 
 ```{r}
-raw_dir <- "data/_raw/"
+raw_dir <- "../data/_raw/"
 data_file <- "GSE182951_Counts_All_Samples.xlsx"
 data_loc <- "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE182951&format=file&file=GSE182951%5FCounts%5FAll%5FSamples%2Exlsx"
 
@@ -52,6 +52,6 @@ meta_data <- data.frame(ID = 1:40) |>
                                 ID > 12 ~ "no_pCR"))
   
 write_csv(x = meta_data,
-          file = "data/meta_data.csv")
+          file = "../data/meta_data.csv")
 
 ```
