@@ -7,26 +7,11 @@ editor: visual
 ```{r}
 library(tidyverse)
 
-meta_data2 <- data.frame(ID = 1:40) |> 
-  #Adding pre/post treatment to the dataset
-  mutate(Treatment = case_when(str_ends(ID,"[13579]") ~ "pre_treatment",
-                               str_ends(ID,"[^13579]") ~ "post_treatment")) |>
-  # Adding corresponding Person ID
-  mutate(subject_ID = case_when(Treatment == "pre_treatment" ~ (ID+1)/2,
-                         Treatment == "post_treatment" ~ ID/2)) |> 
-  mutate(subject_ID = case_when(subject_ID < 10 ~ str_c("subject_0", subject_ID),
-                                   subject_ID >= 10 ~ str_c("subject_", subject_ID))) |> 
-  #Adding pCR status
-  mutate(pCR_status = case_when(ID <= 12 ~ "pCR",
-                                ID > 12 ~ "no_pCR"))
-  
-write_csv(x = meta_data2,
-          file = "data/meta_data2.csv")
   
 ```
 
-```{r, fig.height=7, fig.width=8}
-meta_data2 |>
+```{r, fig.height=7.5, fig.width=5.4}
+meta_data|>
   ggplot(aes(x = pCR_status, y = ID,  color = subject_ID))+ #change it to patient
   #scale_color_discrete(guide = FALSE)+
   scale_y_continuous(breaks = 1:40) +
@@ -34,12 +19,15 @@ meta_data2 |>
   geom_point(aes(shape = Treatment))+
   theme_minimal(base_size = 10)+
   coord_fixed(0.1)+
+  scale_color_discrete(labels=c("patient_01","patient_02", "patient_03", "patient_04", "patient_05", "patient_06", "patient_07", "patient_08", "patient_09","patient_10","patient_11","patient_12","patient_13","patient_14", "patient_15", "patient_16", "patient_17", "patient_18", "patient_19", "patient_20" ))+
   theme(plot.margin = unit(
-    c(1, 0.5, 0.5, 1), "cm"),
-    panel.grid.major.x = element_blank(),# set tthe margins, top, left,... in cms in order
+    c(0.5, 0.5, 0.5, 0.5), "cm"),panel.grid.major.x = element_blank(),# set tthe margins, top, left,... in cms in order
     panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_line(size =1))+
-  labs(x ="pCR Status", y ="Samples", title ="Samples per pCR status by treatment and patient", legend ="number of patient")
+    panel.grid.major.y = element_line(size =1),
+    axis.text.x = element_text(vjust = 7, hjust= 0.5))+
+  labs(x ="pCR Status", y ="Samples", title ="Samples per pCR status by Treatment", color ="Number of Patients")
+
+
 ```
 
 ```{r}

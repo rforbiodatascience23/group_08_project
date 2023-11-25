@@ -69,6 +69,6 @@ full_expression_data <- inner_join(x = expression_data_long,
                                    join_by(Sample == ID))
 
 write_csv(full_expression_data, 
-          "data/full_expression_data.csv")
+          "../data/full_expression_data.csv")
 
 ```
