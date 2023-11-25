@@ -80,6 +80,15 @@ node_attributes_pCR <- merge(
   all.x = TRUE
 )
 
+interactions_pCR_2 <- network_pCR$network |> 
+  as.data.frame()
+
+node_attributes_pCR_2 <- network_pCR$node_attributes |> 
+  as.data.frame() |> 
+  left_join(
+    pt, 
+    by = c("nodes" = "gene"))
+
 ```
 
 ```{r}
