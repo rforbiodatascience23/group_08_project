@@ -16,7 +16,7 @@ library(fgsea)
 
 ```{r}
 string_database <- translate_database("string") # save on the first iteration
-save(string_database, file = "data/string_db.RData")
+save(string_database, file = "..R/data/string_db.RData")
 
 load("data/")
 load("data/")
