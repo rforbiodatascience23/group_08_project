@@ -4,8 +4,6 @@ format: html
 editor: visual
 ---
 
-We are representing the first 10 samples from our data to see what our table looks like:
-
 ```{r}
 library(tidyverse)
 
@@ -46,7 +44,7 @@ meta_data2 |>
 
 ```{r}
 
-
+#blablabla
 ```
 
 ```{r}
