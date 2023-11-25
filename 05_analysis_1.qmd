@@ -65,6 +65,6 @@ dds_non_pCR <- DESeq(dds_non_pCR)
 GSE182951_diff_pCR_pre_post <- as.data.frame(results(dds_pCR, alpha = 0.05))
 GSE182951_diff_nonpCR_pre_post <- as.data.frame(results(dds_non_pCR, alpha = 0.05))
 
-GSE182951_diff_pCR_pre_post_genes <- rownames(filter(GSE182951_diff_pCR_pre_post, log2FoldChange > 1 | log2FoldChange < -1))
+GSE182951_diff_pCR_pre_post_genes <- rownames(filter(GSE182951_diff_pCR_pre_post, log2FoldChange > 1 | log2FoldChange < -1)) 
 GSE182951_diff_nonpCR_pre_post_genes <- rownames(filter(GSE182951_diff_nonpCR_pre_post, log2FoldChange > 1 | log2FoldChange < -1))
 ```
