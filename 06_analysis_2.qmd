@@ -3,3 +3,137 @@ title: "06_analysis_2"
 format: html
 editor: visual
 ---
+
+## Libraries
+
+```{r}
+#| message: false
+library(tidyverse)
+library(DiscoNet)
+library(msigdbr)
+library(fgsea)
+```
+
+```{r}
+string_database <- translate_database("string") # save on the first iteration
+save(string_database, file = "data/string_db.RData")
+
+load("data/")
+load("data/")
+```
+
+```{r}
+View(GSE182951_diff_pCR_pre_post_genes)
+View(GSE182951_diff_nonpCR_pre_post_genes)
+```
+
+## **Virtual Pull-down**
+
+### Preparing data
+
+```{r}
+seed_nodes_pCR <- GSE182951_diff_pCR_pre_post_genes  |> 
+  strsplit(", ")  |> 
+  unlist() 
+  
+seed_nodes_pCR_list <- tibble(Value = seed_nodes_pCR)|> 
+  as.list()
+```
+
+```{r}
+seed_nodes_nonpCR <- GSE182951_diff_nonpCR_pre_post_genes  |> 
+  strsplit(", ")  |> 
+  unlist()
+
+seed_nodes_nonpCR_list <- tibble(Value = seed_nodes_nonpCR)|>
+  as.list()
+
+```
+
+### Virtual Pull-down
+
+```{r}
+network_pCR <- virtual_pulldown(
+  seed_nodes = GSE182951_diff_pCR_pre_post_genes, 
+  database = string_database, 
+  id_type = "hgnc", 
+  string_confidence_score = 700) # default value
+```
+
+```{r}
+network_nonpCR <- virtual_pulldown(
+  seed_nodes = GSE182951_diff_nonpCR_pre_post_genes, 
+  database = string_database, 
+  id_type = "hgnc", 
+  string_confidence_score = 700 ) # default value
+
+```
+
+```{r}
+interactions_pCR <- data.frame(network_pCR$network)
+node_attributes_pCR <- data.frame(network_pCR$node_attributes)
+node_attributes_pCR <- merge(
+  x = node_attributes_pCR, 
+  y = pt, 
+  by.x = "nodes", 
+  by.y = "gene", 
+  all.x = TRUE
+)
+
+```
+
+```{r}
+interactions_nonpCR <- data.frame(network_nonpCR$network)
+node_attributes_nonpCR <- data.frame(network_nonpCR$node_attributes)
+node_attributes_nonpCR <- merge(
+  x = node_attributes_nonpCR, 
+  y = pt, 
+  by.x = "nodes", 
+  by.y = "gene", 
+  all.x = TRUE
+)
+```
+
+## Gene Enrichment Analysis
+
+### Preparing data
+
+For gene enrichment analysis, there are two methods over representation analysis, and functional class scoring. Here we will be performing the first of the two and for that we need two inputs:  
+
+1.  target gene list of interest, (obtained in the previous analysis)
+2.  background gene list
+3.  the gene sets to be examined over representation.
+
+```{r}
+
+biological_process_df = msigdbr(species = "human", category = "C5", subcategory = "BP")
+
+BP_list = split(x = biological_process_df$gene_symbol, f = biological_process_df$gs_name)
+
+biological_process_list <- biological_process_df |> 
+  select(gene_symbol, gs_name)  |> 
+  group_by(gs_name)  |> 
+  summarise(gene_symbols = list(gene_symbol))  |> 
+  ungroup()
+
+
+BP_list_2 <- biological_process_df |> 
+  select(gene_symbol, gs_name) |> 
+  group_by(gs_name) |> 
+  summarize(gene_symbols = list(unique(gene_symbol))) |> 
+  ungroup() |> 
+  pull(gene_symbols)
+
+
+
+```
+
+### Over representation analysis
+
+```{r}
+ora_results <- fora(
+  pathways = BP_list, 
+  genes = V(communities$communities[[1]])$name, 
+  universe = rownames(pt), 
+  minSize = 10)
+```
