@@ -29,12 +29,13 @@ write_csv(x = meta_data2,
 
 ```{r, fig.height=7, fig.width=8}
 meta_data2 |>
-  ggplot(aes(x = pCR_status, y = ID,  color = subject_ID))+
+  ggplot(aes(x = pCR_status, y = ID,  color = subject_ID))+ #change it to patient
   #scale_color_discrete(guide = FALSE)+
   scale_y_continuous(breaks = 1:40) +
   geom_hline(yintercept = 0)+
   geom_point(aes(shape = Treatment))+
   theme_minimal(base_size = 10)+
+  coord_fixed(0.1)+
   theme(plot.margin = unit(
     c(1, 0.5, 0.5, 1), "cm"),
     panel.grid.major.x = element_blank(),# set tthe margins, top, left,... in cms in order
@@ -59,7 +60,7 @@ full_expression_data |>
 ```{r, fig.height=6, fig.width=15}
 library(patchwork)
 p1 <- full_expression_data |>
-  filter(pCR_status == "pCR" & subject_ID == "subject_01" C2out > 100 & Treatment == "pre_treatment" ) |>
+  filter(pCR_status == "pCR" & subject_ID == "subject_02" & Count > 100 & Treatment == "pre_treatment" ) |>
   ggplot(aes(x = Gene , y = Count))+
   scale_y_continuous(breaks = seq(100, 29000, by = 2000))+
   geom_col()+
@@ -74,7 +75,7 @@ p1 <- full_expression_data |>
   labs( x ="Genes", y ="Total Counts", title ="pCR, patient1, 100>Counts, pre")
 
 p2 <- full_expression_data |>
-  filter(pCR_status == "pCR" & subject_ID == "subject_01" & Count > 100 & Treatment == "post_treatment" ) |>
+  filter(pCR_status == "pCR" & subject_ID == "subject_02" & Count > 100 & Treatment == "post_treatment" ) |>
   ggplot(aes(x = Gene , y = Count))+
   scale_y_continuous(breaks = seq(100, 1500, by = 100))+
   geom_col()+
@@ -197,4 +198,24 @@ plot2 <- group1|>
 ```{r}
 full_expression_data|>
   filter(Count ==0 & pCR_status == "pCR")
+```
+
+```{r, fig.height=6, fig.width=10}
+full_expression_data |>
+  group_by(Sample) |>
+  summarise(av=mean(Count))|>
+  mutate(Treatment = case_when(Sample %% 2 == 0  ~ "Post-treatment",
+                         Sample %% 2 !=0 ~ "Pre-treatment")) |>
+  ggplot(aes(x = Sample, y = av))+
+  scale_x_continuous(breaks = 1:40) +
+  geom_boxplot()+
+  theme_minimal(base_size = 12)+
+  theme(plot.margin = unit(
+    c(1, 0.5, 0.5, 1), "cm"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),# set tthe margins, top, left,... in cms in order
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.y = element_line(size =1))+
+  theme(axis.text.x = element_text(vjust = 7, hjust= 0.4))+
+  labs(title ="The Average Total Count in Samples by Treatment", x ="Samples", y ="Average Counts", legend ="Treatment")
 ```
