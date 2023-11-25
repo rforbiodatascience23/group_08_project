@@ -12,43 +12,29 @@ library(tidyverse)
 library(DiscoNet)
 library(msigdbr)
 library(fgsea)
+library(ggraph)
+library(igraph)
+source("99_proj_func.R")
 ```
 
 ```{r}
-string_database <- translate_database("string") # save on the first iteration
-save(string_database, file = "../data/string_database.RData")
+#string_database <- translate_database("string") # save on the first iteration
+# save(string_database, file = "../data/string_database.RData")
 
 load("../data/GSE182951_diff_nonpCR_pre_post_genes.RData")
 load("../data/GSE182951_diff_pCR_pre_post_genes.RData")
+load("../data/string_database.RData")
+
 ```
 
 ```{r}
 View(GSE182951_diff_pCR_pre_post_genes)
 View(GSE182951_diff_nonpCR_pre_post_genes)
+View(string_database)
+
 ```
 
 ## **Virtual Pull-down**
-
-### Preparing data
-
-```{r}
-seed_nodes_pCR <- GSE182951_diff_pCR_pre_post_genes  |> 
-  strsplit(", ")  |> 
-  unlist() 
-  
-seed_nodes_pCR_list <- tibble(Value = seed_nodes_pCR)|> 
-  as.list()
-```
-
-```{r}
-seed_nodes_nonpCR <- GSE182951_diff_nonpCR_pre_post_genes  |> 
-  strsplit(", ")  |> 
-  unlist()
-
-seed_nodes_nonpCR_list <- tibble(Value = seed_nodes_nonpCR)|>
-  as.list()
-
-```
 
 ### Virtual Pull-down
 
@@ -70,44 +56,96 @@ network_nonpCR <- virtual_pulldown(
 ```
 
 ```{r}
-interactions_pCR <- data.frame(network_pCR$network)
-node_attributes_pCR <- data.frame(network_pCR$node_attributes)
-node_attributes_pCR <- merge(
-  x = node_attributes_pCR, 
-  y = pt, 
-  by.x = "nodes", 
-  by.y = "gene", 
-  all.x = TRUE
-)
-
-interactions_pCR_2 <- network_pCR$network |> 
+interactions_pCR <- network_pCR$network |> 
   as.data.frame()
 
-node_attributes_pCR_2 <- network_pCR$node_attributes |> 
-  as.data.frame() |> 
-  left_join(
-    pt, 
-    by = c("nodes" = "gene"))
-
+node_attributes_pCR <- network_pCR$node_attributes |> 
+  as.data.frame() 
 ```
 
 ```{r}
-interactions_nonpCR <- data.frame(network_nonpCR$network)
-node_attributes_nonpCR <- data.frame(network_nonpCR$node_attributes)
-node_attributes_nonpCR <- merge(
-  x = node_attributes_nonpCR, 
-  y = pt, 
-  by.x = "nodes", 
-  by.y = "gene", 
-  all.x = TRUE
-)
+interactions_nonpCR <- network_nonpCR$network |> 
+  as.data.frame()
+
+node_attributes_nonpCR <-  network_nonpCR$node_attributes |> 
+  as.data.frame() 
 ```
+
+```{r}
+graph_pCR <- graph_from_data_frame(
+  interactions_pCR, 
+  directed = FALSE,
+  vertices = node_attributes_pCR)
+
+graph_pCR_1 <- relevance_filtering(graph_pCR, 0.8)
+isolated_nodes <- which(degree(graph_pCR_1) == 0)
+graph_pCR_1 <- delete_vertices(graph_pCR_1, 
+                                  isolated_nodes)
+```
+
+```{r}
+graph_nonpCR <- graph_from_data_frame(
+  interactions_nonpCR, 
+  directed = FALSE,
+  vertices = node_attributes_nonpCR)
+
+graph_nonpCR_1 <- relevance_filtering(graph_nonpCR, 0.8)
+isolated_nodes <- which(degree(graph_nonpCR_1) == 0)
+graph_nonpCR_1 <- delete_vertices(graph_nonpCR_1, isolated_nodes)
+
+```
+
+
+### Communities
+
+```{r}
+communities_nonpCR <- community_detection(
+  graph_nonpCR_1, 
+  algorithm = "mcode", 
+  D = 0.05, 
+  haircut = TRUE, 
+  fluff = FALSE, 
+  fdt = 0.8, 
+  loops = FALSE)
+
+communities_pCR <- community_detection(
+  graph_pCR_1, 
+  algorithm = "mcode", 
+  D = 0.05, 
+  haircut = TRUE, 
+  fluff = FALSE, 
+  fdt = 0.8, 
+  loops = FALSE)
+
+```
+
+### Grpahing Communities with create_and_save_graph function
+
+```{r}
+# Subitems for communities_nonpCR
+nonpCR_subcommunities <- c(1, 2, 11, 23, 80)
+
+# Subitems for communities_pCR
+pCR_subcommunities <- c(1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13)
+
+
+for (i in nonpCR_subccommunities) {
+  create_and_save_graph(communities_nonpCR, "nonpCR", i, output_dir = "../results/")
+}
+
+# Loop through communities_pCR and create/save graphs
+for (i in pCR_subcommunities) {
+  create_and_save_graph(communities_pCR, "pCR", i, output_dir = "../results/")
+}
+
+```
+
 
 ## Gene Enrichment Analysis
 
 ### Preparing data
 
-For gene enrichment analysis, there are two methods over representation analysis, and functional class scoring. Here we will be performing the first of the two and for that we need two inputs:  
+For gene enrichment analysis, there are two methods over representation analysis, and functional class scoring. Here we will be performing the first of the two and for that we need two inputs:
 
 1.  target gene list of interest, (obtained in the previous analysis)
 2.  background gene list
@@ -140,9 +178,60 @@ BP_list_2 <- biological_process_df |>
 ### Over representation analysis
 
 ```{r}
-ora_results <- fora(
+# Subitems for communities_nonpCR
+nonpCR_subcommunities <- c(1, 2, 11, 23, 80)
+
+# Subitems for communities_pCR
+pCR_subcommunities <- c(1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13)
+
+
+for (i in pCR_subccommunities) {ora_results_pCR <- fora(
   pathways = BP_list, 
-  genes = V(communities$communities[[1]])$name, 
-  universe = rownames(pt), 
+  genes = V(communities_pCR$communities[[i]])$name, 
+  universe = GSE182951_diff_nonpCR_pre_post_genes, 
   minSize = 10)
+
+}
+
+for (i in nonpCR_subccommunities) {ora_results_nonpCR <- fora(
+  pathways = BP_list, 
+  genes = V(communities_nonpCR$communities[[i]])$name, 
+  universe = GSE182951_diff_pCR_pre_post_genes, 
+  minSize = 10)
+
+}
+
 ```
+
+```{r}
+# Subitems for communities_nonpCR
+nonpCR_subcommunities <- c(1, 2, 11, 23, 80)
+
+# Subitems for communities_pCR
+pCR_subcommunities <- c(1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13)
+
+# Create lists to store results
+ora_results_nonpCR <- list()
+ora_results_pCR <- list()
+
+# Loop for communities_pCR
+for (i in pCR_subcommunities) {
+  ora_results_pCR[[i]] <- fora(
+    pathways = BP_list, 
+    genes = V(communities_pCR$communities[[i]])$name, 
+    universe = GSE182951_diff_nonpCR_pre_post_genes, 
+    minSize = 10
+  )
+}
+
+# Loop for communities_nonpCR
+for (i in nonpCR_subcommunities) {
+  ora_results_nonpCR[[i]] <- fora(
+    pathways = BP_list, 
+    genes = V(communities_nonpCR$communities[[i]])$name, 
+    universe = GSE182951_diff_pCR_pre_post_genes, 
+    minSize = 10
+  )
+}
+```
+
