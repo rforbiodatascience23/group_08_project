@@ -38,7 +38,7 @@ Each sample is paired: 1 - 2, 3 - 4, etc. Each pair is 1 = pre-treatment, 2 = po
 
 ```{r}
 # For fun lets add more:
-meta_data <- data.frame(ID = 1:60) |> 
+meta_data <- data.frame(ID = 1:40) |> 
   #Adding pre/post treatment to the dataset
   mutate(Treatment = case_when(str_ends(ID,"[13579]") ~ "pre_treatment",
                                str_ends(ID,"[^13579]") ~ "post_treatment")) |>
