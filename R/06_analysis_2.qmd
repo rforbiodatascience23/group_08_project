@@ -4,7 +4,7 @@ format: html
 editor: visual
 ---
 
-## Libraries
+## Loading libraries
 
 ```{r}
 #| message: false
@@ -38,6 +38,8 @@ View(string_database)
 
 ### Virtual Pull-down
 
+Here we are performing a virtual pull down which is a method of detecting protein-protein interactions of the genes of interest by fetching interactions from the STRING database loaded above, it then identifies all the interactions for the provided seed nodes, found in analysis 1, these are all the genes with log2fold changes above 1 or below -1 when comparing pre and post treatment in the pCR and nonpCR groups.
+
 ```{r}
 network_pCR <- virtual_pulldown(
   seed_nodes = GSE182951_diff_pCR_pre_post_genes, 
@@ -55,6 +57,8 @@ network_nonpCR <- virtual_pulldown(
 
 ```
 
+The following step creates two sub-data frames for each of the pull downs, with the interaction of all the proteins identified and their attributes which includes a calculated relevance score for the interactions found.
+
 ```{r}
 interactions_pCR <- network_pCR$network |> 
   as.data.frame()
@@ -70,6 +74,8 @@ interactions_nonpCR <- network_nonpCR$network |>
 node_attributes_nonpCR <-  network_nonpCR$node_attributes |> 
   as.data.frame() 
 ```
+
+The following step constructs igraph objects, graphs, from the interactions and n odes for all the nodes in the pull downs.
 
 ```{r}
 graph_pCR <- graph_from_data_frame(
@@ -95,8 +101,9 @@ graph_nonpCR_1 <- delete_vertices(graph_nonpCR_1, isolated_nodes)
 
 ```
 
-
 ### Communities
+
+This step is meant to detect communities, and therefore potential protein complexes that might be identified form the interactions found above.
 
 ```{r}
 communities_nonpCR <- community_detection(
@@ -119,7 +126,7 @@ communities_pCR <- community_detection(
 
 ```
 
-### Grpahing Communities with create_and_save_graph function
+### Graphing Communities with create_and_save_graph function
 
 ```{r}
 # Subitems for communities_nonpCR
@@ -129,7 +136,7 @@ nonpCR_subcommunities <- c(1, 2, 11, 23, 80)
 pCR_subcommunities <- c(1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13)
 
 
-for (i in nonpCR_subccommunities) {
+for (i in nonpCR_subcommunities) {
   create_and_save_graph(communities_nonpCR, "nonpCR", i, output_dir = "../results/")
 }
 
@@ -139,7 +146,6 @@ for (i in pCR_subcommunities) {
 }
 
 ```
-
 
 ## Gene Enrichment Analysis
 
@@ -235,3 +241,4 @@ for (i in nonpCR_subcommunities) {
 }
 ```
 
+Next step is to make the lists tidy

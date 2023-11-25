@@ -5,7 +5,7 @@ create_and_save_graph <- function(graph_data, prefix, i, output_dir) {
   # Plot the graph
   g <- ggraph(current_graph) +
     geom_edge_link() +
-    geom_node_point(size = 5) +
+    geom_node_point(aes(color = seed), size = 5) +
     geom_node_text(aes(label = name), size = 10, repel = TRUE) +
     ggtitle(paste("Community", i))
   
