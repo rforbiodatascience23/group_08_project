@@ -9,7 +9,7 @@ editor: visual
 ```{r}
 #| message: false
 library(tidyverse)
-library(DiscoNet)
+library(DiscoNet) # install_github("gmoranzoni/DiscoNet")
 library(msigdbr)
 library(fgsea)
 library(ggraph)
@@ -18,7 +18,7 @@ source("99_proj_func.R")
 ```
 
 ```{r}
-#string_database <- translate_database("string") # save on the first iteration
+# string_database <- translate_database("string") # save on the first iteration since it takes somtime to run
 # save(string_database, file = "../data/string_database.RData")
 
 load("../data/GSE182951_diff_nonpCR_pre_post_genes.RData")
@@ -38,13 +38,13 @@ View(string_database)
 
 ### Virtual Pull-down
 
-Here we are performing a virtual pull down which is a method of detecting protein-protein interactions of the genes of interest by fetching interactions from the STRING database loaded above, it then identifies all the interactions for the provided seed nodes, found in analysis 1, these are all the genes with log2fold changes above 1 or below -1 when comparing pre and post treatment in the pCR and nonpCR groups.
+Here we are performing a virtual pull down which is a method of detecting protein-protein interactions of the genes of interest by fetching interactions from the STRING database loaded above, it then identifies all the interactions for the provided seed nodes, found in analysis 1, these are all the genes with log2fold changes above 1 or below -1 when comparing pre and post treatment in the pCR and non-pCR groups.
 
 ```{r}
 network_pCR <- virtual_pulldown(
   seed_nodes = GSE182951_diff_pCR_pre_post_genes, 
   database = string_database, 
-  id_type = "hgnc", 
+  id_type = "hgnc", # 
   string_confidence_score = 700) # default value
 ```
 
