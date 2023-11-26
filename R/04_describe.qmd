@@ -1,8 +1,10 @@
 ---
-title: "03_describe"
+title: "04_describe"
 format: html
 editor: visual
 ---
+
+## Description of data
 
 ```{r}
 library(tidyverse)
@@ -10,7 +12,7 @@ library(patchwork)
 ```
 
 ```{r, fig.height=7.5, fig.width=5.4}
-
+#|echo: false
 figure1 <- meta_data |>
   ggplot(aes(x = pCR_status,
              y = ID,
@@ -90,6 +92,7 @@ ggsave("../results/figure_02.jpg",
 ```
 
 ```{r, fig.height=10, fig.width=20}
+#| echo: false
 
 p1 <- full_expression_data |>
   filter(pCR_status == "pCR" &
