@@ -1,5 +1,5 @@
 ---
-title: "04_augment"
+title: "03_augment"
 format: html
 editor: visual
 ---
@@ -10,18 +10,19 @@ https://r4bds.github.io/lab06.html
 
 -   LogFC
 
-
 ```{r}
 library(tidyverse)
 ```
 
 ## Load
+
 ```{r}
 data <- read_csv("data/full_expression_data.csv")
 
 ```
 
 # Calculate the logFC for each gene expression
+
 ```{r}
 data <- data |> sample_n(200)
 
