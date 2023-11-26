@@ -3,3 +3,20 @@ title: "00_all"
 format: html
 editor: visual
 ---
+
+## Introduction
+
+
+
+{{< include 01_load.qmd >}}
+
+
+{{< include 02_clean.qmd >}}
+
+
+```{r}
+quarto::quarto_render(input = "00_all.qmd")
+file.rename(from = "00_all.html",
+            to = "../results/00_all.html")
+```
+
