@@ -13,14 +13,34 @@ library("readxl")
 ```
 
 ```{r}
+#| message: false
+
+# Creating directories
+
+data_dir <- "../data/"
 raw_dir <- "../data/_raw/"
+results_dir <-"../results/"
+doc_dir <-"../doc/"
 data_file <- "GSE182951_Counts_All_Samples.xlsx"
 data_loc <- "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE182951&format=file&file=GSE182951%5FCounts%5FAll%5FSamples%2Exlsx"
 
+# Data directory
+if (!dir.exists(data_dir)){
+  dir.create(path = data_dir)
+  }
+# _raw directory
 if (!dir.exists(raw_dir)){
   dir.create(path = raw_dir)
   }
 
+# results directory
+if (!dir.exists(results_dir)){
+  dir.create(path = results_dir)
+  }
+# doc directory
+if (!dir.exists(doc_dir)){
+  dir.create(path = doc_dir)
+  }
 
 if (!file.exists(str_c(raw_dir, data_file))){
   download.file(
