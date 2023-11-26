@@ -1,5 +1,5 @@
 # Function to create and save the graph of a community to a PNG file
-create_and_save_graph <- function(graph_data, prefix, i, output_dir) {
+create_and_save_graph <- function(graph_data, seed, prefix, i, output_dir) {
   current_graph <- graph_data$communities[[i]]
   
   # Plot the graph

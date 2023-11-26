@@ -44,7 +44,7 @@ Here we are performing a virtual pull down which is a method of detecting protei
 network_pCR <- virtual_pulldown(
   seed_nodes = GSE182951_diff_pCR_pre_post_genes, 
   database = string_database, 
-  id_type = "hgnc", # 
+  id_type = "hgnc", # HUGO Gene Nomenclature Comittee
   string_confidence_score = 700) # default value
 ```
 
@@ -52,16 +52,18 @@ network_pCR <- virtual_pulldown(
 network_nonpCR <- virtual_pulldown(
   seed_nodes = GSE182951_diff_nonpCR_pre_post_genes, 
   database = string_database, 
-  id_type = "hgnc", 
+  id_type = "hgnc", # HUGO Gene Nomenclature Comittee
   string_confidence_score = 700 ) # default value
 
 ```
 
-The following step creates two sub-data frames for each of the pull downs, with the interaction of all the proteins identified and their attributes which includes a calculated relevance score for the interactions found.
+The following step creates two sub-data frames for each of the pull downs, with the interaction of all the proteins identified and their attributes which includes a calculated relevance score for the interactions found. Here we are using \$ instead of **select** because the output of the virtual_pull-down function is a list object.
 
 ```{r}
 interactions_pCR <- network_pCR$network |> 
   as.data.frame()
+
+# could also be solved like this "network_pCR[["network"]]"
 
 node_attributes_pCR <- network_pCR$node_attributes |> 
   as.data.frame() 
@@ -73,6 +75,7 @@ interactions_nonpCR <- network_nonpCR$network |>
 
 node_attributes_nonpCR <-  network_nonpCR$node_attributes |> 
   as.data.frame() 
+
 ```
 
 The following step constructs igraph objects, graphs, from the interactions and n odes for all the nodes in the pull downs.
@@ -83,10 +86,14 @@ graph_pCR <- graph_from_data_frame(
   directed = FALSE,
   vertices = node_attributes_pCR)
 
+# these three steps are to filter the interactions with a relevance score of 0.8 or lower; and unconnected nodes, that is nodes with degree 0. 
+# We tried doing it with tidy R but the pipes and mutate function did not work properly because they are igraph objects, not data frames or tibbles, and when we tried to read as data frame it was not possible to run the igraph functions of them. Same below. 
+
 graph_pCR_1 <- relevance_filtering(graph_pCR, 0.8)
 isolated_nodes <- which(degree(graph_pCR_1) == 0)
 graph_pCR_1 <- delete_vertices(graph_pCR_1, 
-                                  isolated_nodes)
+                               isolated_nodes)
+
 ```
 
 ```{r}
@@ -97,32 +104,32 @@ graph_nonpCR <- graph_from_data_frame(
 
 graph_nonpCR_1 <- relevance_filtering(graph_nonpCR, 0.8)
 isolated_nodes <- which(degree(graph_nonpCR_1) == 0)
-graph_nonpCR_1 <- delete_vertices(graph_nonpCR_1, isolated_nodes)
+graph_nonpCR_1 <- delete_vertices(graph_nonpCR_1, 
+                                  isolated_nodes)
 
 ```
 
 ### Communities
 
-This step is meant to detect communities, and therefore potential protein complexes that might be identified form the interactions found above.
+This step isused to detect communities, and therefore potential protein complexes that might be identified form the interactions found among all the genes above. Specifically we use the mcode algorithm, which is a clustering algorithm used to identify molecular complexes in protein interactions networks through a three-stage process:
+
+1.  **Weighting**: giving a higher score to the nodes with neighboring nodes that are are more interconnected
+2.  **Molecular complex prediction**: starts with the node with highest-weight and it moves out recursively, adding nodes to the complex that are above a given threshold, in this case D.
+3.  **Post-processing**: it applies filters to improve the cluster quality (haircut)
 
 ```{r}
 communities_nonpCR <- community_detection(
   graph_nonpCR_1, 
   algorithm = "mcode", 
-  D = 0.05, 
-  haircut = TRUE, 
-  fluff = FALSE, 
-  fdt = 0.8, 
-  loops = FALSE)
+  D = 0.05, # default vertex weight percentage for mcode
+  haircut = TRUE) # trims singly-connected nodes, nodes that are unlilkely to have real function in the complex 
+
 
 communities_pCR <- community_detection(
   graph_pCR_1, 
   algorithm = "mcode", 
   D = 0.05, 
-  haircut = TRUE, 
-  fluff = FALSE, 
-  fdt = 0.8, 
-  loops = FALSE)
+  haircut = TRUE)
 
 ```
 
@@ -137,12 +144,12 @@ pCR_subcommunities <- c(1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13)
 
 
 for (i in nonpCR_subcommunities) {
-  create_and_save_graph(communities_nonpCR, "nonpCR", i, output_dir = "../results/")
+  create_and_save_graph(communities_nonpCR, GSE182951_diff_nonpCR_pre_post_genes, "nonpCR", i, output_dir = "../results/")
 }
 
 # Loop through communities_pCR and create/save graphs
 for (i in pCR_subcommunities) {
-  create_and_save_graph(communities_pCR, "pCR", i, output_dir = "../results/")
+  create_and_save_graph(communities_pCR, GSE182951_diff_pCR_pre_post_genes,"pCR", i, output_dir = "../results/")
 }
 
 ```
