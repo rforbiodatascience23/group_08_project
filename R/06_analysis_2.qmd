@@ -126,26 +126,21 @@ communities_pCR <- community_detection(
 
 ```
 
-### Graphing Communities with create_and_save_graph function
+### Graphing Communities with create_and_save_graph_for_community function
 
 ```{r}
-# Subitems for communities_nonpCR
 nonpCR_subcommunities <- c(1, 2, 11, 23, 80)
-
-# Subitems for communities_pCR
 pCR_subcommunities <- c(1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13)
+output_dir <- "../results/"
 
+# Apply the function to each element of nonpCR_subcommunities
+lapply(nonpCR_subcommunities, create_and_save_graph_for_community, community = communities_nonpCR, type = "nonpCR", seed = GSE182951_diff_nonpCR_pre_post_genes , output_dir = output_dir)
 
-for (i in nonpCR_subcommunities) {
-  create_and_save_graph(communities_nonpCR, "nonpCR", i, output_dir = "../results/")
-}
-
-# Loop through communities_pCR and create/save graphs
-for (i in pCR_subcommunities) {
-  create_and_save_graph(communities_pCR, "pCR", i, output_dir = "../results/")
-}
+# Apply the function to each element of pCR_subcommunities
+lapply(pCR_subcommunities, create_and_save_graph_for_community, community = communities_pCR, type = "pCR", seed = GSE182951_diff_nonpCR_pre_post_genes, output_dir = output_dir)
 
 ```
+
 
 ## Gene Enrichment Analysis
 
@@ -192,8 +187,8 @@ pCR_subcommunities <- c(1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13)
 ```{r}
 
 # Create lists to store results
-results_list_nonpCR <- list()
-results_list_pCR <- list()
+ora_results_list_nonpCR <- list()
+ora_results_list_pCR <- list()
 
 # Loop for communities_pCR
 for (i in pCR_subcommunities) {
