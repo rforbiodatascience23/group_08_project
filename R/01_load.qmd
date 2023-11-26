@@ -15,33 +15,30 @@ library("readxl")
 ```{r}
 #| message: false
 
-# Creating directories
-
 data_dir <- "../data/"
 raw_dir <- "../data/_raw/"
 results_dir <-"../results/"
 doc_dir <-"../doc/"
+
 data_file <- "GSE182951_Counts_All_Samples.xlsx"
 data_loc <- "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE182951&format=file&file=GSE182951%5FCounts%5FAll%5FSamples%2Exlsx"
 
-# Data directory
+# Creating directories
 if (!dir.exists(data_dir)){
   dir.create(path = data_dir)
   }
-# _raw directory
 if (!dir.exists(raw_dir)){
   dir.create(path = raw_dir)
   }
 
-# results directory
 if (!dir.exists(results_dir)){
   dir.create(path = results_dir)
   }
-# doc directory
 if (!dir.exists(doc_dir)){
   dir.create(path = doc_dir)
   }
 
+# Download and read the raw data file
 if (!file.exists(str_c(raw_dir, data_file))){
   download.file(
     url = str_c(data_loc),
@@ -51,7 +48,7 @@ if (!file.exists(str_c(raw_dir, data_file))){
 expression_data = read_excel(str_c(raw_dir, data_file))
 ```
 
-# **Creating the metadata**
+## **Creating the metadata**
 
 The metadata was not available online, but based on the paper we know that:
 
