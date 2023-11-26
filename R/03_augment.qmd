@@ -1,10 +1,53 @@
 ---
-title: "03_augment"
+title: "04_augment"
 format: html
 editor: visual
 ---
 
+https://r4bds.github.io/lab06.html
+
+-   Add additional information using join =\> Create a table from scratch and then add
+
+-   LogFC
+
+
 ```{r}
-#| echo: false
-library("tidyverse")
+library(tidyverse)
+```
+
+## Load
+```{r}
+data <- read_csv("data/full_expression_data.csv")
+
+```
+
+# Calculate the logFC for each gene expression
+```{r}
+data <- data |> sample_n(200)
+
+augmented_data <- data |> 
+  group_by(person_ID, Gene) |> summarise(test = n())
+
+#  summarise(log_test =
+#              Count[Treatment=="post-treatment"]/
+#              Count[Treatment=="pre-treatment"])
+
+augmented_data
+  
+```
+
+# Leftovers
+
+**Max count for high expression... but I think logFC might work better**
+
+```{r}
+high_expression <- expression_data_long |> 
+  group_by(Name) |> 
+  summarise(mCounts = max(Counts)) |> 
+  filter(mCounts > 25)
+
+high_expression
+
+high_expression_data <- high_expression |> 
+  filter(!Name)
 ```
