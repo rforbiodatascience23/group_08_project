@@ -4,7 +4,7 @@ format: html
 editor: visual
 ---
 
-## Libraries
+## Loading libraries
 
 ```{r}
 #| message: false
@@ -12,45 +12,33 @@ library(tidyverse)
 library(DiscoNet)
 library(msigdbr)
 library(fgsea)
+library(ggraph)
+library(igraph)
+source("99_proj_func.R")
 ```
 
 ```{r}
-string_database <- translate_database("string") # save on the first iteration
-save(string_database, file = "../data/string_database.RData")
+#string_database <- translate_database("string") # save on the first iteration
+# save(string_database, file = "../data/string_database.RData")
 
 load("../data/GSE182951_diff_nonpCR_pre_post_genes.RData")
 load("../data/GSE182951_diff_pCR_pre_post_genes.RData")
+load("../data/string_database.RData")
+
 ```
 
 ```{r}
 View(GSE182951_diff_pCR_pre_post_genes)
 View(GSE182951_diff_nonpCR_pre_post_genes)
+View(string_database)
+
 ```
 
 ## **Virtual Pull-down**
 
-### Preparing data
-
-```{r}
-seed_nodes_pCR <- GSE182951_diff_pCR_pre_post_genes  |> 
-  strsplit(", ")  |> 
-  unlist() 
-  
-seed_nodes_pCR_list <- tibble(Value = seed_nodes_pCR)|> 
-  as.list()
-```
-
-```{r}
-seed_nodes_nonpCR <- GSE182951_diff_nonpCR_pre_post_genes  |> 
-  strsplit(", ")  |> 
-  unlist()
-
-seed_nodes_nonpCR_list <- tibble(Value = seed_nodes_nonpCR)|>
-  as.list()
-
-```
-
 ### Virtual Pull-down
+
+Here we are performing a virtual pull down which is a method of detecting protein-protein interactions of the genes of interest by fetching interactions from the STRING database loaded above, it then identifies all the interactions for the provided seed nodes, found in analysis 1, these are all the genes with log2fold changes above 1 or below -1 when comparing pre and post treatment in the pCR and nonpCR groups.
 
 ```{r}
 network_pCR <- virtual_pulldown(
@@ -69,45 +57,101 @@ network_nonpCR <- virtual_pulldown(
 
 ```
 
-```{r}
-interactions_pCR <- data.frame(network_pCR$network)
-node_attributes_pCR <- data.frame(network_pCR$node_attributes)
-node_attributes_pCR <- merge(
-  x = node_attributes_pCR, 
-  y = pt, 
-  by.x = "nodes", 
-  by.y = "gene", 
-  all.x = TRUE
-)
+The following step creates two sub-data frames for each of the pull downs, with the interaction of all the proteins identified and their attributes which includes a calculated relevance score for the interactions found.
 
-interactions_pCR_2 <- network_pCR$network |> 
+```{r}
+interactions_pCR <- network_pCR$network |> 
   as.data.frame()
 
-node_attributes_pCR_2 <- network_pCR$node_attributes |> 
-  as.data.frame() |> 
-  left_join(
-    pt, 
-    by = c("nodes" = "gene"))
-
+node_attributes_pCR <- network_pCR$node_attributes |> 
+  as.data.frame() 
 ```
 
 ```{r}
-interactions_nonpCR <- data.frame(network_nonpCR$network)
-node_attributes_nonpCR <- data.frame(network_nonpCR$node_attributes)
-node_attributes_nonpCR <- merge(
-  x = node_attributes_nonpCR, 
-  y = pt, 
-  by.x = "nodes", 
-  by.y = "gene", 
-  all.x = TRUE
-)
+interactions_nonpCR <- network_nonpCR$network |> 
+  as.data.frame()
+
+node_attributes_nonpCR <-  network_nonpCR$node_attributes |> 
+  as.data.frame() 
+```
+
+The following step constructs igraph objects, graphs, from the interactions and n odes for all the nodes in the pull downs.
+
+```{r}
+graph_pCR <- graph_from_data_frame(
+  interactions_pCR, 
+  directed = FALSE,
+  vertices = node_attributes_pCR)
+
+graph_pCR_1 <- relevance_filtering(graph_pCR, 0.8)
+isolated_nodes <- which(degree(graph_pCR_1) == 0)
+graph_pCR_1 <- delete_vertices(graph_pCR_1, 
+                                  isolated_nodes)
+```
+
+```{r}
+graph_nonpCR <- graph_from_data_frame(
+  interactions_nonpCR, 
+  directed = FALSE,
+  vertices = node_attributes_nonpCR)
+
+graph_nonpCR_1 <- relevance_filtering(graph_nonpCR, 0.8)
+isolated_nodes <- which(degree(graph_nonpCR_1) == 0)
+graph_nonpCR_1 <- delete_vertices(graph_nonpCR_1, isolated_nodes)
+
+```
+
+### Communities
+
+This step is meant to detect communities, and therefore potential protein complexes that might be identified form the interactions found above.
+
+```{r}
+communities_nonpCR <- community_detection(
+  graph_nonpCR_1, 
+  algorithm = "mcode", 
+  D = 0.05, 
+  haircut = TRUE, 
+  fluff = FALSE, 
+  fdt = 0.8, 
+  loops = FALSE)
+
+communities_pCR <- community_detection(
+  graph_pCR_1, 
+  algorithm = "mcode", 
+  D = 0.05, 
+  haircut = TRUE, 
+  fluff = FALSE, 
+  fdt = 0.8, 
+  loops = FALSE)
+
+```
+
+### Graphing Communities with create_and_save_graph function
+
+```{r}
+# Subitems for communities_nonpCR
+nonpCR_subcommunities <- c(1, 2, 11, 23, 80)
+
+# Subitems for communities_pCR
+pCR_subcommunities <- c(1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13)
+
+
+for (i in nonpCR_subcommunities) {
+  create_and_save_graph(communities_nonpCR, "nonpCR", i, output_dir = "../results/")
+}
+
+# Loop through communities_pCR and create/save graphs
+for (i in pCR_subcommunities) {
+  create_and_save_graph(communities_pCR, "pCR", i, output_dir = "../results/")
+}
+
 ```
 
 ## Gene Enrichment Analysis
 
 ### Preparing data
 
-For gene enrichment analysis, there are two methods over representation analysis, and functional class scoring. Here we will be performing the first of the two and for that we need two inputs:  
+For gene enrichment analysis, there are two methods over representation analysis, and functional class scoring. Here we will be performing the first of the two and for that we need two inputs:
 
 1.  target gene list of interest, (obtained in the previous analysis)
 2.  background gene list
@@ -115,34 +159,63 @@ For gene enrichment analysis, there are two methods over representation analysis
 
 ```{r}
 
-biological_process_df = msigdbr(species = "human", category = "C5", subcategory = "BP")
-
-BP_list = split(x = biological_process_df$gene_symbol, f = biological_process_df$gs_name)
+biological_process_df = msigdbr(
+  species = "human", 
+  category = "C5", 
+  subcategory = "BP"
+)
 
 biological_process_list <- biological_process_df |> 
-  select(gene_symbol, gs_name)  |> 
-  group_by(gs_name)  |> 
-  summarise(gene_symbols = list(gene_symbol))  |> 
-  ungroup()
-
-
-BP_list_2 <- biological_process_df |> 
-  select(gene_symbol, gs_name) |> 
+  select(gs_name, gene_symbol) |> 
   group_by(gs_name) |> 
   summarize(gene_symbols = list(unique(gene_symbol))) |> 
   ungroup() |> 
-  pull(gene_symbols)
-
-
+  pull(gene_symbols, gs_name)
 
 ```
 
 ### Over representation analysis
 
+Over-representation analysis (ORA) is a method used to identify whether certain biological terms or categories (such as gene sets, pathways, or functional annotations) are over-represented in a list of genes or proteins of interest compared to a background set. It involves statistical analysis to determine if the occurrence of specific biological features in the given gene set is higher than would be expected by chance. Here we are performing it for all the communities selected above.
+
+
 ```{r}
-ora_results <- fora(
-  pathways = BP_list, 
-  genes = V(communities$communities[[1]])$name, 
-  universe = rownames(pt), 
-  minSize = 10)
+# Subitems for communities_nonpCR
+nonpCR_subcommunities <- c(1, 2, 11, 23, 80)
+
+# Subitems for communities_pCR
+pCR_subcommunities <- c(1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13)
+
 ```
+
+
+```{r}
+
+# Create lists to store results
+results_list_nonpCR <- list()
+results_list_pCR <- list()
+
+# Loop for communities_pCR
+for (i in pCR_subcommunities) {
+  results_list_pCR[[str_c("ORA_", i, "_community")]] <- fora(
+    pathways = biological_process_list, 
+    genes = V(communities_pCR$communities[[i]])$name, 
+    universe = GSE182951_diff_pCR_pre_post_genes, 
+    minSize = 10
+  )
+  
+}
+
+# Loop for communities_nonpCR
+for (i in nonpCR_subcommunities) {
+  results_list_nonpCR[[str_c("ORA_", i, "_community")]] <- fora(
+    pathways = biological_process_list, 
+    genes = V(communities_nonpCR$communities[[i]])$name, 
+    universe = GSE182951_diff_nonpCR_pre_post_genes, 
+    minSize = 10
+  )
+}
+
+```
+
+
