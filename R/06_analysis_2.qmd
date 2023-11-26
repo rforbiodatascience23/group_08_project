@@ -197,7 +197,7 @@ results_list_pCR <- list()
 
 # Loop for communities_pCR
 for (i in pCR_subcommunities) {
-  results_list_pCR[[paste0("ORA_", i, "_community")]] <- fora(
+  results_list_pCR[[str_c("ORA_", i, "_community")]] <- fora(
     pathways = biological_process_list, 
     genes = V(communities_pCR$communities[[i]])$name, 
     universe = GSE182951_diff_pCR_pre_post_genes, 
@@ -206,10 +206,9 @@ for (i in pCR_subcommunities) {
   
 }
 
-
 # Loop for communities_nonpCR
 for (i in nonpCR_subcommunities) {
-  results_list_nonpCR[[paste0("ORA_", i, "_community")]] <- fora(
+  results_list_nonpCR[[str_c("ORA_", i, "_community")]] <- fora(
     pathways = biological_process_list, 
     genes = V(communities_nonpCR$communities[[i]])$name, 
     universe = GSE182951_diff_nonpCR_pre_post_genes, 

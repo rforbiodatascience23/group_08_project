@@ -10,6 +10,6 @@ create_and_save_graph <- function(graph_data, prefix, i, output_dir) {
     ggtitle(paste("Community", i))
   
   # Save the graph as a PNG file
-  graph_filename <- file.path(output_dir, paste0(prefix, "_community_", i, ".png"))
+  graph_filename <- file.path(output_dir, str_c(prefix, "_community_", i, ".png"))
   ggsave(graph_filename, g, width = 10, height = 8)
 }
