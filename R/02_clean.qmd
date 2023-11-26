@@ -4,34 +4,28 @@ format: html
 editor: visual
 ---
 
+# Cleaning the data
+
 ```{r}
-library(tidyverse)
+#| echo: false
+library("tidyverse")
 ```
 
 ```{r}
 # First we explore the data
-#View(expression_data)
 expression_data |> 
   sample_n(10)
 ```
 
-Column:
+**Columns:**
 
-**Name** which include the gene names.
+1.  **Name** which include the gene names.
+2.  **Identifier** which includes a link to the ENSG identifier for the gene.
+3.  40 columns for each sample. They start with 20756_0XX_genes - Total counts. Where XX is the number of the sample.
 
-**Identifier** which includes a link to the ENSG identifier for the gene.
+Our dataset does not includes any N/A values, so we do not need to take that into account when cleaning.
 
-Then 40 columns for each sample. They start with 20756_0XX_genes - Total counts. Where XX is the number of the sample
-
-So we need to clean the data and change it into tidy data meaning:
-
-Columns = variables
-
-Rows = Observations
-
-Each cell = values.
-
-**Cleaning:**
+**Cleaning procedure:**
 
 -   Create tidy data
 
@@ -49,26 +43,18 @@ expression_data_long <- expression_data |>
   mutate(Sample = as.numeric(str_sub(Sample, 
                                      start = 7, 
                                      end = 9))) |>  
-  
-  #Rename Name column 
+  # Rename Name column 
   rename("Gene" = "Name")
-
-expression_data_long
 ```
 
 # Joining meta data and expression data
 
 ```{r}
-#| label: Metadata added
-
-
 # Connect the expression dataset Sample with the metadata set ID
-
-full_expression_data <- inner_join(x = expression_data_long, 
+full_expression_data <- full_join(x = expression_data_long, 
                                    y = meta_data, 
                                    join_by(Sample == ID))
 
 write_csv(full_expression_data, 
           "../data/full_expression_data.csv")
-
 ```
