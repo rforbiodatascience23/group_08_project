@@ -51,7 +51,7 @@ expression_data_long <- expression_data |>
                                      end = 9))) |>  
   
   #Rename Name column 
-  rename("Gene" = "Name")
+  rename("Name" = "Gene")
 
 expression_data_long
 ```
