@@ -71,4 +71,43 @@ GSE182951_diff_nonpCR_pre_post_genes <- GSE182951_diff_nonpCR_pre_post |> filter
 
 length(GSE182951_diff_pCR_pre_post_genes)
 length(GSE182951_diff_nonpCR_pre_post_genes)
+
+save(GSE182951_diff_pCR_pre_post_genes, file = "/home/people/s233405/r_for_bio_data_science/group_08_project/group_08_project/data/GSE182951_diffGenes_pCR_pre_post_log2fc15.RData")
+save(GSE182951_diff_nonpCR_pre_post_genes, file = "/home/people/s233405/r_for_bio_data_science/group_08_project/group_08_project/data/GSE182951_diffGenes_nonpCR_pre_post_log2fc15.RData")
+```
+
+3.  **Visualization for differentiate expression genes**
+
+```{r}
+#Order the log2 fold change value for obtaining upregulated and downregulated genes
+GSE182951_diff_pCR_pre_post <- GSE182951_diff_pCR_pre_post[order(GSE182951_diff_pCR_pre_post$log2FoldChange), ]
+GSE182951_diff_nonpCR_pre_post <- GSE182951_diff_nonpCR_pre_post[order(GSE182951_diff_nonpCR_pre_post$log2FoldChange), ]
+
+#Group samples into pre-treatment and post-treatment for pCR and non-pCR respectively
+GSE182951_pCR_for_heatmap <- cbind(GSE182951_pCR[, c(1,3,5,7,9,11)], GSE182951_pCR[, c(2,4,6,8,10,12)])
+GSE182951_non_pCR_for_heatmap <- cbind(GSE182951_non_pCR[, c(1,3,5,7,9,11,13,15,17,19,21,23,25,27)],
+                                       GSE182951_non_pCR[, c(2,4,6,8,10,12,14,16,18,20,22,24,26,28)])
+
+#Repeat the process choosing differentiates expression genes (no difference from the previous, but in an order of log2 fold change from low to high)
+GSE182951_diff_pCR_pre_post_genes <- rownames(filter(GSE182951_diff_pCR_pre_post, log2FoldChange < -1 | log2FoldChange > 1))
+GSE182951_diff_nonpCR_pre_post_genes <- rownames(filter(GSE182951_diff_nonpCR_pre_post, log2FoldChange < -1 | log2FoldChange > 1))
+
+#Get index of differentiate expression data for reshaping expression data
+ordered_gene_pos_pCR <- match(GSE182951_diff_pCR_pre_post_genes, rownames(GSE182951_pCR_for_heatmap))
+ordered_gene_pos_non_pCR <- match(GSE182951_diff_nonpCR_pre_post_genes, rownames(GSE182951_non_pCR_for_heatmap))
+
+#Prepare datasets for heatmap, i.e., datasets with ordered genes (log2 fold change from low to #high)
+GSE182951_pCR_for_heatmap <- GSE182951_pCR_for_heatmap[ordered_gene_pos_pCR, ]
+GSE182951_non_pCR_for_heatmap <- GSE182951_non_pCR_for_heatmap[ordered_gene_pos_non_pCR, ]
+
+GSE182951_pCR_for_heatmap$gene <- rownames(GSE182951_pCR_for_heatmap)
+GSE182951_pCR_for_heatmap_long <- melt(GSE182951_pCR_for_heatmap, id.vars = "gene", measure.vars = colnames(GSE182951_pCR_for_heatmap)[1:12])
+
+#Plot heatmap
+ggplot(GSE182951_pCR_for_heatmap_long, aes(x = variable, y = gene)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", na.value = "gray") +
+  labs(title = "Gene Expression Heatmap (Thresholded)", x = "Samples", y = "Genes") +
+  theme_minimal()
+
 ```
