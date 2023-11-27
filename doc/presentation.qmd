@@ -1,0 +1,38 @@
+---
+title: "Presentation_2"
+format:
+  revealjs:
+    embed-resources: true
+editor: visual
+---
+
+## Introduction: Paper and background
+- Turn off alarm
+- Get out of bed
+
+## Introduction: pCR & nonpCR
+- something
+- something
+
+## Materials and methods: Flowchart
+
+
+## Methods: Metadata & Describe
+
+
+## Methods: Gene Expression Analysis
+
+
+## Methods: Virtual pull-down and Gene Enrichement Analysis
+
+
+## Results: Describe
+
+
+## Results: Gene Expression Analysis
+
+
+## Results: Virtual pull-down and Gene Enrichement Analysis
+
+
+## Discussion and Conclussion 
