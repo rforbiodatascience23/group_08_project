@@ -90,7 +90,7 @@ editor: visual
 4.  Generate data for analysis 2 non-tidy, because the codes wasn't running after updates.
 
 ```{r}
-GSE182951 <- read_excel("../data/GSE182951_Counts_All_Samples.xlsx")
+GSE182951 <- read_excel("../data/_raw/GSE182951_Counts_All_Samples.xlsx")
 #View(GSE182951)
 GSE182951 <- as.data.frame(GSE182951)
 col <- as.data.frame(colnames(GSE182951)[-c(1:2)])
@@ -119,8 +119,8 @@ GSE182951_diff_nonpCR_pre_post <- GSE182951_diff_nonpCR_pre_post[order(GSE182951
 GSE182951_diff_pCR_pre_post_genes <- rownames(filter(GSE182951_diff_pCR_pre_post, log2FoldChange < -1 | log2FoldChange > 1))
 GSE182951_diff_nonpCR_pre_post_genes <- rownames(filter(GSE182951_diff_nonpCR_pre_post, log2FoldChange < -1 | log2FoldChange > 1))
 
-save(GSE182951_diff_pCR_pre_post_genes, file = "~/r_for_bio_data_science/group_08_project/group_08_project/data/GSE182951_diff_pCR_pre_post_genes.RData")
+save(GSE182951_diff_pCR_pre_post_genes, file = "../data/GSE182951_diff_pCR_pre_post_genes.RData")
     
-save(GSE182951_diff_nonpCR_pre_post_genes, file = "~/r_for_bio_data_science/group_08_project/group_08_project/data/GSE182951_diff_nonpCR_pre_post_genes.RData")
+save(GSE182951_diff_nonpCR_pre_post_genes, file = "../data/GSE182951_diff_nonpCR_pre_post_genes.RData")
 
 ```

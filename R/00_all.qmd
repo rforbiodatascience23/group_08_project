@@ -56,3 +56,25 @@ create_and_save_graph_for_community <- function(community_data, type, subcommuni
 ```
 
 # Conclusion
+
+In conclusion, we found that the genes from the pCR group were more differentially expressed than the non pCR which makes sense as the pCR group were the ones responding well to the treatment.
+
+After performing overrepresentation enrichment on our pCR and non-pCR communities we found that for the pCR complexes the following were enriched:
+
+-   Cell metabolism: 3 groups enriched for metabolic processes: ribonucleotides, peptides.
+
+-   RNA/DNA replication, cell cycle division control: 4 involved in replication and transcription and cell cycle
+
+-   Immunity: 1 with enrichment for immune system pathways
+
+-   Epigenetics: 1 for histone modification.
+
+For the non-pCR the following were enriched:
+
+-   Cell metabolism: 3 groups enriched for metabolic processes containing ribonucleotides and peptides. 1 mitogenic signalling
+
+-   Cell cycle division control: 1 group involved in r and cell cycle
+
+-   RNA/DNA replication: 1 group involved in replication and transcription
+
+For further analysis we would look into the genes within the enriched communities and see how they may relate to the treatment of cancer patients. If we can use the expression of certain genes to determine if the patient has achieved pathological complete response to the treatment, at an early stage then we can decide whether the patient needs surgery and also if they do not achieve pCR then we can switch treatment and hopefully save them.
