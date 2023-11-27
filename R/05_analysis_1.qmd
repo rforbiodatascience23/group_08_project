@@ -14,84 +14,8 @@ editor: visual
 
     ```
 
-2.  **Reshape full_expression_data**
 
-    Because DESeq2 require a data frame of gene expression data, where the row represents genes and the column represents the samples. So, we need to reshape full_expression_data into that form. Also, we only need "Gene", "Sample", and "Count". After reshaping, set row names as gene names and then delete the "Gene" column.
-
-    ```{r}
-    GSE182951 <- full_reads_data |> 
-                 select(Gene, Sample, Count) |> #These 3 columns are what we need
-                 pivot_wider(names_from = Sample, values_from = Count) |>  
-                 column_to_rownames("Gene") 
-    ```
-
-3.  **Differential expression analysis**
-
-    We decided to analyze the difference between pre- and post treatment patients, under pathological complete response and non-pathological complete response. So, first, we need to split our data based on the two different response status and then compute the differential expressed genes between pre- and post treatment patients respectively.
-
-    ```{r}
-    #| warning: false
-    ########################################################################################
-    ## i) Group our dataset into pCR and non-pCR
-    ########################################################################################
-    GSE182951_pCR <- GSE182951 |> select(1:12) #First 12 samples are pCR
-    GSE182951_nonpCR <- GSE182951 |> select(13:40) #Last 28 samples are non-pCR
-    #--------------------------------------END----------------------------------------------
-
-
-    ########################################################################################
-    ## ii) For each dataset, create a data frame using column names. This data frame is 
-    ## needed by DESeq()
-    ########################################################################################
-    col_pCR <- GSE182951_pCR |> colnames() |> as_tibble_col()
-    col_nonpCR <- GSE182951_nonpCR |> colnames() |> as_tibble_col()
-    #--------------------------------------END----------------------------------------------
-
-
-    ########################################################################################
-    ## iii) Extract differential expressed genes from pCR and non-pCR group, respectively
-    ########################################################################################
-    GSE182951_diffGenes_pCR_pre_post <- GSE182951_pCR |>
-      
-      #Create DESeq2 object
-      DESeqDataSetFromMatrix(colData = col_pCR, 
-                             ~factor(c(rep(c("pre", "post"), 6)))) |>
-      
-      #Performing differential expression analysis
-      DESeq() |>
-      
-      #Set significant level as 0.05 and extract the result
-      results(alpha = 0.05) |>
-      
-      as_tibble(rownames = "Gene") |>
-      
-      #Extract those genes with log2FoldChange larger than 1 or smaller than -1
-      filter(log2FoldChange > 1 | log2FoldChange < -1) |> 
-      select(Gene)
-
-    GSE182951_diffGenes_nonpCR_pre_post <- GSE182951_nonpCR |>
-      DESeqDataSetFromMatrix(colData = col_nonpCR, ~factor(c(rep(c("pre", "post"), 14)))) |>
-      DESeq() |>
-      results(alpha = 0.05) |>
-      as_tibble(rownames = "Gene") |>
-      filter(log2FoldChange > 1 | log2FoldChange < -1) |> 
-      select(Gene)
-    #--------------------------------------END----------------------------------------------
-
-
-    ########################################################################################
-    ## iv) Save our diff genes as RData file and store them in data folder
-    ########################################################################################
-    write_tsv(GSE182951_diffGenes_pCR_pre_post, file = "../data/GSE182951_diffGenes_pCR_pre_post.tsv")
-
-    #save(GSE182951_diffGenes_pCR_pre_post, file = "../data/GSE182951_diffGenes_pCR_pre_post.RData")
-    write_tsv(GSE182951_diffGenes_nonpCR_pre_post, file = "../data/GSE182951_diffGenes_nonpCR_pre_post.tsv")
-
-    #save(GSE182951_diffGenes_nonpCR_pre_post, file = "../data/GSE182951_diffGenes_nonpCR_pre_post.RData")
-    #--------------------------------------END----------------------------------------------
-    ```
-
-4.  **Generate the datasets for volcano plot**
+2.  **Generate the datasets for volcano plot**
 
     Determine the upregulated, downregulated, and non-significant genes.
 
@@ -121,7 +45,7 @@ editor: visual
 ```{=html}
 <!-- -->
 ```
-5.  **Draw volcano plot**
+3.  **Draw volcano plot**
 
     ```{r}
     volcano_plot_pCR <- GSE182951_pCR_DESeq_result |>
