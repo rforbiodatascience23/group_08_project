@@ -48,7 +48,7 @@ reads_data_long <- reads_data |>
                                      start = 7, 
                                      end = 9))) |>  
   #Rename Name column 
-  rename("Gene" = "Name")
+  rename("Gene"="Name")
 ```
 
 Now we need to join the meta data with the count data. Since the samples and ID's match 1:1 we simply need to do a full join.

@@ -22,17 +22,18 @@ Both the data and the article can be accessed via Geo Accession: https://www.ncb
 **Part of the Tidyverse**
 - Readxl: Reads excel files and returns a tibble
 - Dplyr: Data manipulation tool
-- ggraph: Expands on ggplot by covering network and graph data. https://github.com/thomasp85/ggraph
+- Pathchwork: Plots multiple plots together
+- Stringr: String manipulation tool
+- Purr: Data manipulation tool use dfor iteration and functional programming
+
 
 **Bioconductor**
 - DSeq2: Creates differential expression analysis of RNA data. https://bioconductor.org/packages/release/bioc/html/DESeq2.html
 - fgsea: This is a fast algorithm calculating gene enrichment. https://bioconductor.org/packages/release/bioc/html/fgsea.html
-
-msigdbr: Molecular database with many annotated genes. https://www.gsea-msigdb.org/gsea/msigdb
-
-igraph: Graph and network analysis and visualization. https://r.igraph.org/
-
-Patchwork: Can combine several ggplots into one graphic
+- msigdbr: Molecular database with many annotated genes. https://www.gsea-msigdb.org/gsea/msigdb
+- igraph: Graph and network analysis and visualization. https://r.igraph.org/
+- ggraph: Graph and network plotting with ggplot2 format. 
 
 **Packages not on server**
-DiscoNet: https://github.com/ai4ce/DiscoNet
+DiscoNet: Virtual pulldown functions and string database load. https://github.com/gmoranzoni/DiscoNet
+ggraph: Expands on ggplot by covering network and graph data. https://github.com/thomasp85/ggraph
