@@ -32,9 +32,9 @@ Some additional commentary of more peripheral interest.
 
 
 
-## Results: Metadata & Describe
+## Results: Describe
 
-![Figure 1](../results/figure_05.jpg)
+![](../results/figure_05.jpg)
 
 
 
