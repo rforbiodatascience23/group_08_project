@@ -8,11 +8,25 @@ editor: visual
 
 ## Introduction: Paper and background
 
--   Green [^1]
--   Brown
+Circulating Exosomal microRNAs as Predictive Biomarkers of Neoadjuvant Chemotherapy Response in Breast Cancer
+
+Background:
+
+::: columns
+::: {.column width="40%"}
+contents...
+:::
+
+::: {.column width="60%"}
+contents...
+:::
+:::
+
 -   Purple
 
-[^1]: A footnote
+::: footer
+Todorova, Valentina K., et al. "Circulating exosomal microRNAs as predictive biomarkers of neoadjuvant chemotherapy response in breast cancer." Current Oncology 29.2 (2022): 613-630.
+:::
 
 ::: aside
 Some additional commentary of more peripheral interest.
@@ -45,6 +59,5 @@ Some additional commentary of more peripheral interest.
     -   The nonpCR Group has 5 potential complexes or networks with upregulated or downregulated activity when comparing pre and post treatment
     -   The nonpCR Group has 11 potential complexes or networks with upregulated or downregulated activity when comparing pre- and post-treatment
 -   For each network the main enriched biological processes were identified
-
 
 ## Discussion and Conclusion
