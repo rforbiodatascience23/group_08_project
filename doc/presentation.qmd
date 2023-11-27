@@ -1,5 +1,5 @@
 ---
-title: "Presentation"
+title: "Breast cancer pre- and post-treatment gene expresion anlyses "
 format:
   revealjs:
     embed-resources: true
@@ -45,9 +45,15 @@ Todorova, Valentina K., et al. "Circulating exosomal microRNAs as predictive bio
 
 ## Methods: Virtual pull-down and Gene Enrichement Analysis
 
+- **Virtual pull-down** is a method for detecting protein-protein interactions of the genes of interest by fetching interactions from a database.
+
+- **Commmunity detection** is a method for detecting densely connected subgraphs in a network. In this project, we used the community detection method to identify the potential complexes or networks of the genes of interest.
+
+- **Over-representation analysis (ORA)** is a method used to identify whether certain biological terms or categories (such as gene sets, pathways, or functional annotations) are over-represented in a list of genes or proteins of interest.
+
 ## Results: Gene Expression Analysis
 
-## \## Results: Virtual pull-down {.scrollable}
+## Results: Virtual pull-down {.scrollable}
 
 -   **Pre vs. Post Treatment:**
     -   The **nonpCR Group** has 5 potential complexes or networks with upregulated or downregulated activity when comparing pre and post treatment
