@@ -48,7 +48,7 @@ figure1 <- meta_data |>
                                    hjust = 0.5))+
   labs(x = "pCR Status",
        y ="Samples",
-       title = "Samples per pCR status by Treatment",
+       title = "Samples based on pCR status by Treatment",
        color = "Number of Patients")
 
 plot(figure1)
