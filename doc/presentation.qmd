@@ -1,41 +1,38 @@
 ---
-title: "Presentation"
+title: "Breast cancer pre- and post-treatment gene expresion anlyses"
 format:
   revealjs:
     embed-resources: true
 editor: visual
 ---
 
-## Introduction: Paper and background
+## Introduction {.scrollable}
 
 -   Circulating Exosomal microRNAs as Predictive Biomarkers of Neoadjuvant Chemotherapy Response in Breast Cancer
 
-
+|                                                |                                                                                                                       |
+|--------------------------|----------------------------------------------|
 | `Neoadjuvant chemotherapy (NACT)`              | an increasingly used approach for treatment of breast cancer                                                          |
 | `Circulating Exosomal microRNAs(miRNA)`        | small RNA molecules circulating in bodily fluids, potentially serving as biomarkers for treatment response after NACT |
 | `Pathological Complete Response (pCR)`         | absence of active cancer cells in a tissue from the tumor site after NACT                                             |
 | `Non-Pathological Complete Response (non-pCR)` | presence of active cancer cells in a tissue from the tumor site after the treatment                                   |
 
--   The purpose of the study: to investigate whether circulating exosomal microRNAs could predict pCR in breast cancer patients treated with NACT
-
 ::: footer
 Todorova, Valentina K., et al. "Circulating exosomal microRNAs as predictive biomarkers of neoadjuvant chemotherapy response in breast cancer." Current Oncology 29.2 (2022): 613-630.
 :::
 
--   Purple
+## Introduction
 
-::: footer
-Todorova, Valentina K., et al. "Circulating exosomal microRNAs as predictive biomarkers of neoadjuvant chemotherapy response in breast cancer." Current Oncology 29.2 (2022): 613-630.
-:::
+### Our Goals of the Study:
 
-::: aside
-Some additional commentary of more peripheral interest.
-:::
+-   to compare gene expression and gene interaction networks for pre- and post- treatment
 
-## Introduction: pCR & nonpCR
+-   to conduct differential expression analysis across pCR and non-pCR groups
 
--   something
--   somethin
+### The Goal of the Paper:
+
+-   to investigate whether circulating exosomal microRNAs could predict pCR in breast cancer patients treated with NACT
+
 
 ## Materials and methods: Flowchart
 
@@ -54,6 +51,16 @@ Some additional commentary of more peripheral interest.
 ![](images/figure_05.jpg){fig-align="center"}
 
 ## Methods: Gene Expression Analysis
+
+- Estimation of Size Factors
+
+- Estimation of Dispersion
+
+- Fitting the Negative Binomial GLM
+
+- Statistical Testing for Differential Expression
+
+- Multiple Testing Correction
 
 
 ## Methods: Virtual pull-down and Gene Enrichement Analysis {.scrollable}
@@ -103,22 +110,34 @@ ora_result_nonpCR <- fora(
 
 ```
 
-## Results: Gene Expression Analysis
+## Results: Gene Expression Analysis {.scrollable}
 
-## Results: Virtual pull-down  {.scrollable}
+![](../results/volcano_plot_pCR.jpg){width="100%"}
+![](../results/volcano_plot_nonpCR.jpg){width="100%"}
 
-- **Pre vs. Post Treatment**:
+## Results: Virtual pull-down {.scrollable}
+
+-   **Pre vs. Post Treatment**:
     -   The **nonpCR Group** has 5 potential complexes or networks with upregulated or downregulated activity when comparing pre- and post-treatment
     -   The **pCR Group** has 11 potential complexes or networks with upregulated or downregulated activity when comparing pre- and post-treatment
-- Example plots:
+-   Example plots:
 
 ![](../results/pCR_community_4.png){width="48%"}
 ![](../results/nonpCR_community_23.png){width="48%"}
 
-## Results: Gene Enrichement Analysis
--   For each relevant community in pCR and non_pCR the main enriched biological processes were identified
-- Representative plots:
 
-![](.../results/pCR_community_4){fig-align="center"}
+## Results: Gene Enrichement Analysis
+
+-   For each relevant community in pCR and non_pCR the main enriched biological processes were identified
+-   Representative plots:
+
+![](../results/pCR_community_4){fig-align="center"}
 
 ## Discussion and Conclusion
+
+- Differential gene expression was seen in higher levels in the pCR group
+- Further analysis into the communities found by enrichment analysis
+- Early diagnosis could help patients by:
+  - If pCR is achieved: perhaps surgery is not needed
+  - If pCR is not achieved: perhaps a different treatment method
+
