@@ -11,7 +11,7 @@ editor: visual
 -   Circulating Exosomal microRNAs as Predictive Biomarkers of Neoadjuvant Chemotherapy Response in Breast Cancer
 
 |                                                |                                                                                                                       |
-|------------------------|-----------------------------------------------|
+|---------------------------|---------------------------------------------|
 | `Neoadjuvant chemotherapy (NACT)`              | an increasingly used approach for treatment of breast cancer                                                          |
 | `Circulating Exosomal microRNAs(miRNA)`        | small RNA molecules circulating in bodily fluids, potentially serving as biomarkers for treatment response after NACT |
 | `Pathological Complete Response (pCR)`         | absence of active cancer cells in a tissue from the tumor site after NACT                                             |
@@ -23,47 +23,44 @@ editor: visual
 Todorova, Valentina K., et al. "Circulating exosomal microRNAs as predictive biomarkers of neoadjuvant chemotherapy response in breast cancer." Current Oncology 29.2 (2022): 613-630.
 :::
 
-
--   Purple
-
-::: footer
-Todorova, Valentina K., et al. "Circulating exosomal microRNAs as predictive biomarkers of neoadjuvant chemotherapy response in breast cancer." Current Oncology 29.2 (2022): 613-630.
-:::
-
-::: aside
-Some additional commentary of more peripheral interest.
-:::
-
 ## Introduction: pCR & nonpCR
-
--   something
--   something
 
 ## Materials and methods: Flowchart
 
--   potatoe
+![](external_images/flowchart.jpg){fig-align="center"}
 
 ## Methods: Metadata & Describe
 
 ::: {layout-ncol="2"}
-![Figure1](images/figure_01.jpg){.absolute top="200" left="0" width="363" height="540"}
+![](images/figure_01.jpg){width="38%"}
 
-![Figure2](images/figure_02.jpg){.absolute top="200" right="0" width="557" height="340"}
+![](images/figure_02.jpg){width="62%"}
 :::
+
+## Methods: Describe
+
+![](images/figure_05.jpg){fig-align="center"}
 
 ## Methods: Gene Expression Analysis
 
 ## Methods: Virtual pull-down and Gene Enrichement Analysis
 
-## Results: Describe
-
 ## Results: Gene Expression Analysis
 
-## Results: Virtual pull-down and Gene Enrichement Analysis
+## \## Results: Virtual pull-down {.scrollable}
 
--   After the pull-down we found:
-    -   The nonpCR Group has 5 potential complexes or networks with upregulated or downregulated activity when comparing pre and post treatment
-    -   The nonpCR Group has 11 potential complexes or networks with upregulated or downregulated activity when comparing pre- and post-treatment
+-   **Pre vs. Post Treatment:**
+    -   The **nonpCR Group** has 5 potential complexes or networks with upregulated or downregulated activity when comparing pre and post treatment
+    -   The **nonpCR Group** has 11 potential complexes or networks with upregulated or downregulated activity when comparing pre- and post-treatment
+
+![](../results/pCR_community_4.png){width="45%"} ![](../results/nonpCR_community_23.png){width="45%"}
+
+## Results: Gene Enrichment Analysis
+
 -   For each network the main enriched biological processes were identified
+
+-   This is just a representative plot:
+
+![](../results/ORA_plot.png){fig-align="center"}
 
 ## Discussion and Conclusion
