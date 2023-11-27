@@ -40,7 +40,7 @@ Some additional commentary of more peripheral interest.
 
 ## Materials and methods: Flowchart
 
--   potatoe
+![](external_images/flowchart.jpg){fig-align="center"}
 
 ## Methods: Metadata & Describe
 
@@ -52,7 +52,7 @@ Some additional commentary of more peripheral interest.
 
 ## Methods: Describe
 
-![](images/figure_05.jpg){width="80%"}
+![](images/figure_05.jpg){fig-align="center"}
 
 ## Methods: Gene Expression Analysis
 
