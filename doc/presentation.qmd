@@ -35,6 +35,8 @@ Some additional commentary of more peripheral interest.
 
 ## Results: Describe
 
+![Figure 1](../results/figure_05.jpg)
+
 
 ## Results: Gene Expression Analysis
 
