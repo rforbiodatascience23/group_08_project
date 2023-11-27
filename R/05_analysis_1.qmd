@@ -14,7 +14,6 @@ editor: visual
 
     ```
 
-
 2.  **Generate the datasets for volcano plot**
 
     Determine the upregulated, downregulated, and non-significant genes.
@@ -42,9 +41,8 @@ editor: visual
                                     pvalue > -1 ~ "NO"))         
     ```
 
-```{=html}
 <!-- -->
-```
+
 3.  **Draw volcano plot**
 
     ```{r}
@@ -88,9 +86,11 @@ editor: visual
            height = 10,
            device = "jpeg")
     ```
-4. Generate data for analysis 2 non-tidy, because the codes wasn't running after updates.
+
+4.  Generate data for analysis 2 non-tidy, because the codes wasn't running after updates.
+
 ```{r}
-GSE182951 <- read_excel("~/r_for_bio_data_science/group_08_project/group_08_project/data/GSE182951_Counts_All_Samples.xlsx")
+GSE182951 <- read_excel("../data/GSE182951_Counts_All_Samples.xlsx")
 #View(GSE182951)
 GSE182951 <- as.data.frame(GSE182951)
 col <- as.data.frame(colnames(GSE182951)[-c(1:2)])
@@ -121,4 +121,3 @@ GSE182951_diff_nonpCR_pre_post_genes <- rownames(filter(GSE182951_diff_nonpCR_pr
 
 
 ```
-
