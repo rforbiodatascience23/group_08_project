@@ -42,7 +42,7 @@ load("../data/GSE182951_diff_pCR_pre_post_genes.RData")
 
 ### Virtual Pull-down
 
-Here we are performing a virtual pull-down which is a method of detecting protein-protein interactions of the genes of interest by fetching interactions from the STRING database loaded above.The DiscoNet function "virtual_pulldown" identifies all the interactions for the provided seed nodes, found in analysis 1, these are all the genes with log2fold changes above 1 or below -1 when comparing pre and post treatment in the pCR and nonpCR groups.
+Here we are performing a virtual pull-down which is a method of detecting protein-protein interactions of the genes of interest by fetching interactions from the STRING database loaded above. The DiscoNet function "virtual_pulldown" identifies all the interactions for the provided seed nodes, found in analysis 1, these are all the genes with log2fold changes above 1 or below -1 when comparing pre and post treatment in the pCR and nonpCR groups.
 
 This means the pull-down results might include proteins (and therefore genes) that might not be in the seed (input) that are added as known interactants, proteins that normally interact with the proteins identified in our analysis 1 results.
 
@@ -221,7 +221,7 @@ biological_process_list <- biological_process_df |>
 
 Over-representation analysis (ORA) is a method used to identify whether certain biological terms or categories (such as gene sets, pathways, or functional annotations) are over-represented in a list of genes or proteins of interest compared to a background set. It involves statistical analysis to determine if the occurrence of specific biological features in the given gene set is higher than would be expected by chance.
 
-As for the graphing we select only the communities with more than 10 nodes as a cut-off for possibilty being a complex, this is somewhat arbitraty but it is as far as we know the standard value used for complex size
+As for the graphing we select only the communities with more than 10 nodes as a cut-off for possibilty being a complex, this is somewhat arbitrary but it is as far as we know the standard value used for complex size
 
 #### Community selection
 
