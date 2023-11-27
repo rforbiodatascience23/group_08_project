@@ -81,11 +81,13 @@ expression_diff_nonpCR_pre_post <- as.data.frame(results(dds_non_pCR, alpha = 0.
 expression_diff_pCR_pre_post_genes <- expression_diff_pCR_pre_post |> filter(log2FoldChange > 1.5 | log2FoldChange < -1.5) |> rownames()
 expression_diff_nonpCR_pre_post_genes <- expression_diff_nonpCR_pre_post |> filter(log2FoldChange > 1.5 | log2FoldChange < -1.5) |> rownames()
 
+
 length(expression_diff_pCR_pre_post_genes)
 length(expression_diff_nonpCR_pre_post_genes)
 
-write_csv(expression_diff_pCR_pre_post_genes, file = "../data/expression_diffGenes_pCR_pre_post_log2fc15.RData")
-write_csv(expression_diff_nonpCR_pre_post_genes, file = "../data/expression_diffGenes_nonpCR_pre_post_log2fc15.RData")
+
+save(expression_diff_pCR_pre_post_genes, file = "../data/expression_diffGenes_pCR_pre_post_log2fc15.RData")
+save(expression_diff_nonpCR_pre_post_genes, file = "../data/expression_diffGenes_nonpCR_pre_post_log2fc15.RData")
 ```
 
 3.  **Visualization for differentiate expression genes**
