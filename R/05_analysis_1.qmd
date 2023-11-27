@@ -12,9 +12,6 @@ editor: visual
     library(dplyr)
     ```
 
-```{=html}
-<!-- -->
-```
 2.  **Reshape full_expression_data**
 
     Because DESeq2 require a data frame of gene expression data, where the row represents genes and the column represents the samples. So, we need to reshape full_expression_data into that form. Also, we only need "Gene", "Sample", and "Count". After reshaping, set row names as gene names and then delete the "Gene" column.
@@ -23,13 +20,8 @@ editor: visual
     GSE182951 <- full_expression_data |> 
                  select(Gene, Sample, Count) |> #These 3 columns are what we need
                  pivot_wider(names_from = Sample, values_from = Count) |> 
-                 as.data.frame()
-
-    #Set row names as gene names (it's essential for DESeq())
-    rownames(GSE182951) <- GSE182951$Gene
-
-    #Then just delete "Gene" column because we only need the expression value
-    GSE182951 <- GSE182951[, -1] 
+                 as.data.frame() |>
+                 column_to_rownames(var = "Gene")
     ```
 
 3.  **Differential expression analysis**
@@ -64,33 +56,33 @@ editor: visual
       DESeq() |>
       #Set significant level as 0.05 and extract the result
       results(alpha = 0.05) |>
-      #Convert the result into data frame
-      as.data.frame() |>
+      as_tibble(rownames = NA) |>
       #Extract those genes with log2FoldChange larger than 1 or smaller than -1
-      filter(log2FoldChange > 1 | log2FoldChange < -1) |> rownames()
+      filter(log2FoldChange > 1 | log2FoldChange < -1) |> 
+      rownames() #|>
+      #as.data.frame()
 
     GSE182951_diffGenes_nonpCR_pre_post <- GSE182951_nonpCR |>
       DESeqDataSetFromMatrix(colData = col_nonpCR, ~factor(c(rep(c("pre", "post"), 14)))) |>
       DESeq() |>
       results(alpha = 0.05) |>
       as.data.frame() |>
-      filter(log2FoldChange > 1 | log2FoldChange < -1) |> rownames()
+      filter(log2FoldChange > 1 | log2FoldChange < -1) |> 
+      rownames() |> 
+      as.data.frame()
     #--------------------------------------END----------------------------------------------
 
 
     ########################################################################################
     ## iv) Save our diff genes as RData file and store them in data folder
     ########################################################################################
-    save(GSE182951_diff_pCR_pre_post_genes, file = "/home/people/s233405/r_for_bio_data_science/group_08_project/group_08_project/data/GSE182951_diffGenes_pCR_pre_post_log2fc15.RData")
+    save(GSE182951_diffGenes_pCR_pre_post, file = "../data/GSE182951_diffGenes_pCR_pre_post.RData")
 
-    save(GSE182951_diff_nonpCR_pre_post_genes, file = "/home/people/s233405/r_for_bio_data_science/group_08_project/group_08_project/data/GSE182951_diffGenes_nonpCR_pre_post_log2fc15.RData")
+    save(GSE182951_diffGenes_nonpCR_pre_post, file = "../data/GSE182951_diffGenes_nonpCR_pre_post.RData")
     #--------------------------------------END----------------------------------------------
     ```
 
-```{=html}
-<!-- -->
-```
-3.  **Visualization for differentiate expression genes**
+4.  **Visualization for differentiate expression genes**
 
 ```{r}
 #Order the log2 fold change value for obtaining upregulated and downregulated genes
