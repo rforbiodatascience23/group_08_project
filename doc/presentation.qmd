@@ -29,13 +29,17 @@ Some additional commentary of more peripheral interest.
 
 ## Methods: Metadata & Describe
 
+::: {layout-ncol="2"}
+![Figure1](images/figure_01.jpg){.absolute top="200" left="0" width="363" height="540"}
+
+![Figure2](images/figure_02.jpg){.absolute top="200" right="0" width="557" height="340"}
+:::
+
 ## Methods: Gene Expression Analysis
 
 ## Methods: Virtual pull-down and Gene Enrichement Analysis
 
 ## Results: Describe
-
-![](../results/figure_05.jpg)
 
 ## Results: Gene Expression Analysis
 
@@ -45,6 +49,5 @@ Some additional commentary of more peripheral interest.
     -   The nonpCR Group has 5 potential complexes or networks with upregulated or downregulated activity when comparing pre and post treatment
     -   The nonpCR Group has 11 potential complexes or networks with upregulated or downregulated activity when comparing pre- and post-treatment
 -   For each network the main enriched biological processes were identified
-
 
 ## Discussion and Conclusion
