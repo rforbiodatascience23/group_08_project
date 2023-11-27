@@ -24,7 +24,9 @@ Both the data and the article can be accessed via Geo Accession: https://www.ncb
 - fgsea: This is a fast algorithm calculating gene enrichment. https://bioconductor.org/packages/release/bioc/html/fgsea.html
 
 msigdbr: Molecular database with many annotated genes. https://www.gsea-msigdb.org/gsea/msigdb
+
 igraph: Graph and network analysis and visualization. https://r.igraph.org/
+
 Patchwork: Can combine several ggplots into one graphic
 
 **Packages not on server**
