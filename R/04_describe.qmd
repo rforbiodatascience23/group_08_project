@@ -4,9 +4,9 @@ format: html
 editor: visual
 ---
 
-## Description of data
+# Description of data
 
-### Load libraries
+## Load libraries
 
 ```{r}
 #|echo: false
@@ -14,7 +14,7 @@ library(tidyverse)
 library(patchwork)
 ```
 
-### Background test 
+## Background test
 
 Neoadjuvant chemotherapy (NACT) is gaining popularity in treating breast cancer. Achieving a pathological complete response (pCR) is seen as a positive indicator of disease-specific survival. This research "Circulating Exosomal microRNAs as Predictive Biomarkers of Neoadjuvant Chemotherapy Response in Breast Cancer" explores the potential of circulating exosomal microRNAs to forecast pCR in breast cancer patients undergoing NACT.
 
@@ -23,7 +23,8 @@ For our project, we used the above-mentioned article data set, which involved co
 Our first figure represents an overview of the meta_data. We have 20 breast cancer patients before (pre_treatment) and after (post_treatment) the NACT treatment. It means that we used 40 samples for our analysis and every patient has 1 pre- and 1 post-treatment sample. The plot shows the 40 samples based on their pCR_status.\
 
 ```{r, fig.height=7.5, fig.width=5.4}
-#| echo: false
+#| label: fig-metadata
+#| warning: false
 figure1 <- meta_data |>
   ggplot(aes(x = pCR_status,
              y = ID,
@@ -62,10 +63,10 @@ ggsave("../results/figure_01.jpg",
 
 ```
 
-The full_expression_data contains all the observations and variables that we need to use for the analysis.
+The full_reads_data contains all the observations and variables that we need to use for the analysis.
 
 ```{r}
-full_expression_data|>
+full_reads_data|>
   sample_n(10)
 ```
 
@@ -75,7 +76,7 @@ In this figure, we illustrate the average read counts of all the samples by the 
 
 ```{r, fig.height=6, fig.width=10}
 #| echo: false
-figure2 <- full_expression_data |>
+figure2 <- full_reads_data |>
   group_by(Sample) |>
   summarise(av = mean(Count))|>
   mutate(Treatment = case_when(Sample %% 2 == 0 ~ "Post-treatment",
@@ -110,11 +111,11 @@ ggsave("../results/figure_02.jpg",
        device = "jpeg")
 ```
 
-The 3. figure displays the differences in read counts between the pre-and post-treatment by the genes. As an example, we arbitrary chose 1-1 pCR-patient from each treatment type and filtered the gene expression counts.
+The 3. figure displays the differences in read counts between the pre-and post-treatment by the genes. As an example, we arbitrary chose 1-1 pCR-patient from each treatment type and filtered the read counts.
 
 ```{r, fig.height=10, fig.width=20}
 #| echo: false
-p1 <- full_expression_data |>
+p1 <- full_reads_data |>
   filter(pCR_status == "pCR" &
          subject_ID == "subject_03" &
          Count > 500 &
@@ -141,7 +142,7 @@ p1 <- full_expression_data |>
        y ="Total Read Counts",
        title ="A Pre-treatment Sample of pCR Patient_07 filterd by 500 > Counts")
 
-p2 <- full_expression_data |>
+p2 <- full_reads_data |>
   filter(pCR_status == "pCR" &
          subject_ID == "subject_03" &
          Count > 500 &
@@ -183,7 +184,7 @@ The 4. figure displays the differences in read counts between the pre-and post-t
 
 ```{r, fig.height=10, fig.width=20}
 #| echo: false
-p3 <- full_expression_data |>
+p3 <- full_reads_data |>
   filter(pCR_status == "no_pCR" &
          subject_ID == "subject_12" &
          Count > 500 &
@@ -213,7 +214,7 @@ p3 <- full_expression_data |>
        y = "Total Read Counts",
        title = "A Pre-treatment Sample of no_pCR Patient_12 filterd by 500 > Counts")
 
-p4 <- full_expression_data |>
+p4 <- full_reads_data |>
   filter(pCR_status == "no_pCR" &
          subject_ID == "subject_12" &
          Count > 500 &
@@ -258,7 +259,7 @@ Our last figure illustrates the differences in read counts between the no_pCR an
 
 ```{r, fig.height=27, fig.width=27}
 #| echo: false
-p5 <- full_expression_data |>
+p5 <- full_reads_data |>
   filter(Count > 2500 &
          Treatment == "pre_treatment") |>
   ggplot(aes(x = Gene,
@@ -281,7 +282,7 @@ p5 <- full_expression_data |>
        y = "Total Counts",
        title = "Total read counts of the genes before the treatment filtered by pCR_status")
 
-p6 <- full_expression_data |>
+p6 <- full_reads_data |>
   filter(Count > 2500 &
          Treatment == "post_treatment") |>
   ggplot(aes(x = Gene,
