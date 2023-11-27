@@ -3,3 +3,22 @@ title: "00_all"
 format: html
 editor: visual
 ---
+
+# Introduction
+
+{{< include 01_load.qmd >}}
+
+{{< include 02_clean.qmd >}}
+
+{{< include 03_augment.qmd >}}
+
+{{< include 04_describe.qmd >}}
+
+```{r}
+#{{< include 05_analysis_1.qmd >}}
+
+
+#{{< include 06_analysis_2.qmd >}}
+```
+
+# Function
