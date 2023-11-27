@@ -27,7 +27,6 @@ string_database <- translate_database("string")
 load("../data/GSE182951_diff_nonpCR_pre_post_genes.RData")
 load("../data/GSE182951_diff_pCR_pre_post_genes.RData")
 # load("../data/string_database.RData")
-
 ```
 
 ### Inspect data **on first run**
