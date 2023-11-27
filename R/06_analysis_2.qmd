@@ -14,6 +14,7 @@ library(msigdbr)
 library(fgsea)
 library(ggraph)
 library(igraph)
+library(patchwork)
 source("99_proj_func.R")
 ```
 
@@ -276,18 +277,66 @@ Just to note, the %\>% pipe is used in both cases below after mutate as it broug
 results_tibble_pCR <- results_list_pCR |>
   map(as_tibble) |>
   map(~ slice_head(.x, n = 10) |> mutate(row_number = row_number() - 1)) %>%
-  set_names(str_c("Community_", seq_along(.))) |>
-  enframe(name = "Community") |>
+  set_names(str_c("community_", seq_along(.))) |>
+  enframe(name = "community") |>
   unnest(cols = "value")
 
 results_tibble_nonpCR <- results_list_nonpCR |> 
   map(as_tibble) |> 
   map(~ slice_head(.x, n = 10) |> mutate(row_number = row_number() - 1)) %>% 
-  set_names(str_c("Community_", seq_along(.))) |> 
-  enframe(name = "sublist") |> 
+  set_names(str_c("community_", seq_along(.))) |> 
+  enframe(name = "community") |> 
   unnest(cols = "value")
 
-write_csv(results_tibble_pCR, "../data/ORA_pCR.csv")
-write_csv(results_tibble_nonpCR, "../data/ORA_nonpCR.csv")
+write_tsv(results_tibble_pCR, "../data/ORA_pCR.tsv")
+write_tsv(results_tibble_nonpCR, "../data/ORA_nonpCR.tsv")
+
+```
+
+```{r}
+plot_pCR <- results_tibble_pCR |> 
+  mutate(pathway = str_remove(pathway, "GOBP_"))  |>
+  mutate(pathway = str_trunc(pathway, width = 6)) |> 
+  group_by(community, pathway)  |> 
+  summarize(count = n())  |> 
+  ungroup()  |> 
+  ggplot(aes(x = community, y = count, fill = pathway)) +
+  geom_bar(stat = "identity", position = "stack") + 
+  geom_text(aes(label = pathway), position = position_stack(vjust = 0.7), vjust = -0.5, size = 3, color = "black", angle = 45, hjust = 1) +
+  labs(title = "Enriched biological process by community pCR",
+       x = "Community",
+       y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+        axis.title.y = element_text(size = 8),
+        legend.position = "none")
+
+
+
+plot_nonpCR <- results_tibble_nonpCR |> 
+  mutate(pathway = str_remove(pathway, "GOBP_"))  |>
+  mutate(pathway = str_trunc(pathway, width = 8)) |> 
+  group_by(community, pathway)  |> 
+  summarize(count = n())  |> 
+  ungroup()  |> 
+  ggplot(aes(x = community, y = count, fill = pathway)) +
+  geom_bar(stat = "identity", position = "stack") +
+  geom_text(aes(label = pathway), position = position_stack(vjust = 0.5), size = 3, color = "black", angle = 45, hjust = 0.5) +
+  labs(title = "Enriched biological process by community nonpCR",
+       x = "Community",
+       y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+        axis.title.y = element_text(size = 8),
+        legend.position = "none")
+
+
+combined_ORA_plot <- plot_pCR + 
+  plot_nonpCR + 
+  plot_layout(ncol = 2)
+
+ggsave( "../results/ORA_plot.png", combined_ORA_plot, width = 10, height = 5, units = "in", dpi = 300)
+
+
 
 ```
