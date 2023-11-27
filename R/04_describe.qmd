@@ -16,7 +16,7 @@ library(patchwork)
 
 ## Metadata overview
 
-Our first figure represents an overview of the meta_data. We have 20 breast cancer patients before (pre_treatment) and after (post_treatment) the NACT treatment. It means that we used 40 samples for our analysis and every patient has 1 pre- and 1 post-treatment sample. The plot shows the 40 samples based on their pCR_status.\
+Our first figure represents an overview of the meta_data. We have 20 breast cancer patients before (pre_treatment) and after (post_treatment) the NACT treatment. It means that we used 40 samples for our analysis and every patient has 1 pre- and 1 post-treatment sample. The plot shows the 40 samples based on their pCR_status.
 
 ```{r, fig.height=7.5, fig.width=5.4}
 #| label: fig-metadata
@@ -60,6 +60,7 @@ ggsave("../results/figure_01.jpg",
 ```
 
 ## Analysis of the full data set
+
 The full_reads_data contains all the observations and variables that we need to use for the analysis.
 
 ```{r}
@@ -86,7 +87,7 @@ figure2 <- full_reads_data |>
            position = position_dodge(preserve = "single"),
            colour = "black",
            alpha = 0.5)+
-  theme_minimal(base_size = 12)+
+  theme_minimal(base_size = 10)+
   theme(plot.margin = unit(c(1, 0.5, 0.5, 1), "cm"),
         panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank(),
@@ -96,7 +97,7 @@ figure2 <- full_reads_data |>
                                    hjust = 0.4))+
   labs(x = "Samples",
        y = "Average Read Counts",
-       title = "The average read counts of all the samples by the treatment",
+       title = "The Average Read Counts of all the Samples by the Treatment",
        legend = "Treatment")
 
 print(figure2)
@@ -137,7 +138,7 @@ p1 <- full_reads_data |>
   theme(legend.position = "none")+
   labs(x ="Genes",
        y ="Total Read Counts",
-       title ="A Pre-treatment Sample of pCR Patient_07 filterd by 500 > Counts")
+       title ="A Pre-treatment Sample of pCR Patient_03 filterd by 500 > Counts")
 
 p2 <- full_reads_data |>
   filter(pCR_status == "pCR" &
@@ -164,7 +165,7 @@ p2 <- full_reads_data |>
   theme(legend.position = "none")+
   labs(x = "Genes",
        y = "Total Read Counts",
-       title = "A Post-treatment Sample of pCR Patient_07 filterd by 500 > Counts")
+       title = "A Post-treatment Sample of pCR Patient_03 filterd by 500 > Counts")
 
 figure3 <- p1 / p2
 
@@ -177,7 +178,7 @@ ggsave("../results/figure_03.jpg",
        device = "jpeg")
 ```
 
-The 4. figure displays the differences in read counts between the pre-and post-treatment by genes. As an example, we arbitrary chose 1-1 no_pCR-patient from each treatment type and filtered the read counts.
+The 4. figure displays the differences in read counts between the pre-and post-treatment by genes. As an example, we arbitrary chose 1-1 no_pCR-patient from each treatment type and filtered the read counts (Count \> 2500).
 
 ```{r, fig.height=10, fig.width=20}
 #| echo: false
@@ -252,7 +253,7 @@ ggsave("../results/figure_04.jpg",
        device = "jpeg")
 ```
 
-Our last figure illustrates the differences in read counts between the no_pCR and pCR patients in each treatment type by genes.
+Our last figure illustrates the differences in read counts between the no_pCR and pCR patients in each treatment type by genes. We have to many genes so we also filtered the read counts here.
 
 ```{r, fig.height=27, fig.width=27}
 #| echo: false
@@ -277,7 +278,7 @@ p5 <- full_reads_data |>
                                    size = 20))+
   labs(x ="Genes",
        y = "Total Counts",
-       title = "Total read counts of the genes before the treatment filtered by pCR_status")
+       title = "Total Read Counts of the genes before the treatment filtered by pCR_status")
 
 p6 <- full_reads_data |>
   filter(Count > 2500 &
@@ -300,7 +301,7 @@ p6 <- full_reads_data |>
                                    size = 20))+
   labs(x ="Genes",
        y = "Total Counts",
-       title = "Total read counts of the genes after the treatment filtered by pCR_status")
+       title = "Total Read Counts of the genes after the treatment filtered by pCR_status")
 
 figure5 <- p5 / p6
 
