@@ -3,3 +3,26 @@ title: "00_all"
 format: html
 editor: visual
 ---
+
+# Introduction
+
+Neoadjuvant chemotherapy (NACT) is gaining popularity in treating breast cancer. Achieving a pathological complete response (pCR) is seen as a positive indicator of disease-specific survival. This research "Circulating Exosomal microRNAs as Predictive Biomarkers of Neoadjuvant Chemotherapy Response in Breast Cancer" by Todorova et al. explores the potential of circulating exosomal microRNAs to forecast pCR in breast cancer patients undergoing NACT.
+
+For our project, we used the above-mentioned article data set. The data involved collecting plasma samples from 20 patients before and after the initial treatment cycle. The samples were sequenced using an miRNA library and afterwards the reads where then mapped to an miRNA database, and this collection of gene read counts is what we will base our analysis on.
+
+{{< include 01_load.qmd >}}
+
+{{< include 02_clean.qmd >}}
+
+{{< include 03_augment.qmd >}}
+
+{{< include 04_describe.qmd >}}
+
+```{r}
+#{{< include 05_analysis_1.qmd >}}
+
+
+#{{< include 06_analysis_2.qmd >}}
+```
+
+# Function

@@ -4,53 +4,81 @@ format: html
 editor: visual
 ---
 
-## Load Data
+# Load Data
 
 ```{r}
-#| message: false
-
+#| warning: false
 library("tidyverse")
 library("readxl")
 ```
 
-```{r}
-raw_dir <- "../data/_raw/"
-data_file <- "GSE182951_Counts_All_Samples.xlsx"
-data_loc <- "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE182951&format=file&file=GSE182951%5FCounts%5FAll%5FSamples%2Exlsx"
+## Loading data and creating directories
 
+Our data comes from NCBI and is in an excel format. We use the URL and readxl to load the data.
+
+```{r}
+#| label: load data and directories
+
+# Creating directories
+data_dir <- "../data/"
+raw_dir <- "../data/_raw/"
+doc_dir <- "../doc/"
+results_dir <-"../results/"
+
+if (!dir.exists(data_dir)){
+  dir.create(path = data_dir)
+}
 if (!dir.exists(raw_dir)){
   dir.create(path = raw_dir)
-  }
+}
+if (!dir.exists(doc_dir)){
+  dir.create(path = doc_dir)
+}
+if (!dir.exists(results_dir)){
+  dir.create(path = results_dir)
+}
+
+
+# Data retrieval
+data_file <- "GSE182951_Counts_All_Samples.xlsx"
+
+data_loc <- "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE182951&format=file&file=GSE182951%5FCounts%5FAll%5FSamples%2Exlsx"
+
 if (!file.exists(str_c(raw_dir, data_file))){
   download.file(
     url = str_c(data_loc),
     destfile = str_c(raw_dir, data_file))
   }
 
-expression_data = read_excel(str_c(raw_dir, data_file))
+reads_data = read_excel(str_c(raw_dir, data_file))
 ```
 
-# **Creating the metadata**
+## Creating the metadata
 
 Based on the paper we know that:
 
-Each sample is paired: 1 - 2, 3 - 4, etc. Each pair is 1 = pre-treatment, 2 = post-treatment. Samples: 1-12 belong to group A - pCR, the rest belong to group B - no pCR.
+1.  Each sample is paired: 1 - 2, 3 - 4, 5 - 6, etc.
+2.  Each pair is split into pre-treatment (uneven numbers) and post-treatment (even numbers).
+3.  Samples: 1-12 belong to group A - pCR, the rest belong to group B - no pCR.
 
 ```{r}
-# For fun lets add more:
+
 meta_data <- data.frame(ID = 1:40) |> 
+  
   #Adding pre/post treatment to the dataset
   mutate(Treatment = case_when(str_ends(ID,"[13579]") ~ "pre_treatment",
                                str_ends(ID,"[^13579]") ~ "post_treatment")) |>
+  
   # Adding corresponding Person ID
   mutate(subject_ID = case_when(Treatment == "pre_treatment" ~ (ID+1)/2,
-                         Treatment == "post_treatment" ~ ID/2)) |> 
+                                Treatment == "post_treatment" ~ ID/2)) |> 
+  # Changing subject ID number
   mutate(subject_ID = case_when(subject_ID < 10 ~ str_c("subject_0", subject_ID),
-                                   subject_ID >= 10 ~ str_c("subject_", subject_ID))) |> 
+                                subject_ID >= 10 ~ str_c("subject_", subject_ID))) |> 
   #Adding pCR status
   mutate(pCR_status = case_when(ID <= 12 ~ "pCR",
                                 ID > 12 ~ "no_pCR"))
-  
+
 write_csv(x = meta_data,
           file = "../data/meta_data.csv")
 

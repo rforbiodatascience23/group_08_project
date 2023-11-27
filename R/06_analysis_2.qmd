@@ -18,19 +18,23 @@ source("99_proj_func.R")
 ```
 
 ```{r}
-#string_database <- translate_database("string") # save on the first iteration
+string_database <- translate_database("string") 
+
+# save on the first iteration
 # save(string_database, file = "../data/string_database.RData")
 
 load("../data/GSE182951_diff_nonpCR_pre_post_genes.RData")
 load("../data/GSE182951_diff_pCR_pre_post_genes.RData")
-load("../data/string_database.RData")
+# load("../data/string_database.RData")
 
 ```
 
+### Inspect data **on first run**
+
 ```{r}
-View(GSE182951_diff_pCR_pre_post_genes)
-View(GSE182951_diff_nonpCR_pre_post_genes)
-View(string_database)
+# View(GSE182951_diff_pCR_pre_post_genes)
+# View(GSE182951_diff_nonpCR_pre_post_genes)
+# View(string_database)
 
 ```
 
@@ -38,7 +42,11 @@ View(string_database)
 
 ### Virtual Pull-down
 
-Here we are performing a virtual pull down which is a method of detecting protein-protein interactions of the genes of interest by fetching interactions from the STRING database loaded above, it then identifies all the interactions for the provided seed nodes, found in analysis 1, these are all the genes with log2fold changes above 1 or below -1 when comparing pre and post treatment in the pCR and nonpCR groups.
+Here we are performing a virtual pull-down which is a method of detecting protein-protein interactions of the genes of interest by fetching interactions from the STRING database loaded above.The DiscoNet function "virtual_pulldown" identifies all the interactions for the provided seed nodes, found in analysis 1, these are all the genes with log2fold changes above 1 or below -1 when comparing pre and post treatment in the pCR and nonpCR groups.
+
+This means the pull-down results might include proteins (and therefore genes) that might not be in the seed (input) that are added as known interactants, proteins that normally interact with the proteins identified in our analysis 1 results.
+
+#### Virtual pull-down for pCR group
 
 ```{r}
 network_pCR <- virtual_pulldown(
@@ -47,6 +55,8 @@ network_pCR <- virtual_pulldown(
   id_type = "hgnc", 
   string_confidence_score = 700) # default value
 ```
+
+#### Virtual pull-down for nonpCR group
 
 ```{r}
 network_nonpCR <- virtual_pulldown(
@@ -59,35 +69,53 @@ network_nonpCR <- virtual_pulldown(
 
 The following step creates two sub-data frames for each of the pull downs, with the interaction of all the proteins identified and their attributes which includes a calculated relevance score for the interactions found.
 
+#### Interactions and nodes data frames for the network of the pCR group
+
 ```{r}
 interactions_pCR <- network_pCR$network |> 
-  as.data.frame()
+  as_tibble()
 
 node_attributes_pCR <- network_pCR$node_attributes |> 
-  as.data.frame() 
+  as_tibble() 
 ```
+
+#### Interactions and nodes data frames (or tibbles) for the network of the non pCR group
 
 ```{r}
 interactions_nonpCR <- network_nonpCR$network |> 
-  as.data.frame()
+  as_tibble()
 
 node_attributes_nonpCR <-  network_nonpCR$node_attributes |> 
-  as.data.frame() 
+  as_tibble()
 ```
 
-The following step constructs igraph objects, graphs, from the interactions and n odes for all the nodes in the pull downs.
+The following step constructs igraph objects, protein-protein interaction graphs , from the interactions and nodes for all the nodes and interactions in each of the two pull_downs.
+
+#### Graph for the pCR group
+
+The graph creation below also includes a filtering step to remove nodes with a degree of 0 and those nodes with an relevance score of 0.8 or below, meaning nodes that are not connected to any other nodes in the graph.
 
 ```{r}
 graph_pCR <- graph_from_data_frame(
-  interactions_pCR, 
+  interactions_pCR, # tibble with the interaction between proteins in pCR 
   directed = FALSE,
-  vertices = node_attributes_pCR)
+  vertices = node_attributes_pCR) # tibble with the attributes of the nodes in pCR includes relvance score
 
-graph_pCR_1 <- relevance_filtering(graph_pCR, 0.8)
-isolated_nodes <- which(degree(graph_pCR_1) == 0)
-graph_pCR_1 <- delete_vertices(graph_pCR_1, 
-                                  isolated_nodes)
+# The three lines below make use of some base R as the transformation form
+# igraph object to tibble, to use tidyverse functions, and back to igraph 
+# object was not working.
+
+graph_pCR_1_filtered <- graph_pCR |> 
+  relevance_filtering(0.8) # 0.8 is a standard value (not a fixed value)
+
+isolated_nodes_pCR <- which(degree(graph_pCR_1_filtered) == 0)
+
+graph_pCR_1_filtered_cleaned <- delete_vertices(
+  graph_pCR_1_filtered,
+  isolated_nodes_pCR)
 ```
+
+#### Graph for the nonpCR group
 
 ```{r}
 graph_nonpCR <- graph_from_data_frame(
@@ -95,55 +123,66 @@ graph_nonpCR <- graph_from_data_frame(
   directed = FALSE,
   vertices = node_attributes_nonpCR)
 
-graph_nonpCR_1 <- relevance_filtering(graph_nonpCR, 0.8)
-isolated_nodes <- which(degree(graph_nonpCR_1) == 0)
-graph_nonpCR_1 <- delete_vertices(graph_nonpCR_1, isolated_nodes)
+graph_nonpCR_1_filtered <- graph_nonpCR |> 
+  relevance_filtering(0.8)
+
+isolated_nodes_nonpCR <- which(degree(graph_nonpCR_1_filtered) == 0)
+
+graph_nonpCR_1_filtered_cleaned <- delete_vertices(
+  graph_nonpCR_1_filtered, 
+  isolated_nodes_nonpCR)
 
 ```
 
 ### Communities
 
-This step is meant to detect communities, and therefore potential protein complexes that might be identified form the interactions found above.
+This step is meant to detect communities within the pCR and nonpCR graphs, and therefore potential protein complexes that might be identified form the interactions found above. This is done with a DiscoNEt function called "community_detection" which uses the igraph object created above and the MCODE algorithm to detect communities.
+
+The MCODE algorithm uses a three-stage process:
+
+1.  **Weighting**: Nodes with the most interactions get the weight highest score.
+2.  **Molecular complex prediction**: Starts with the node with the highest weight (seed), that is the node with most of interactions i.e. also node with highest degrees; and add nodes above a set threshold in a recursive manner.
+3.  **Post-processing**: Applies filters to improve cluster quality by addressing issues like "haircut", which removes singly connected nodes.
 
 ```{r}
 communities_nonpCR <- community_detection(
-  graph_nonpCR_1, 
-  algorithm = "mcode", 
-  D = 0.05, 
-  haircut = TRUE, 
-  fluff = FALSE, 
-  fdt = 0.8, 
-  loops = FALSE)
+  graph_nonpCR_1_filtered_cleaned, 
+  algorithm = "mcode", # specifies algorithm, in this case MCODE
+  D = 0.05, # threshold of weight percentage of the vertes to be use by MCODE standard value
+  haircut = TRUE) # removes the nodes that are only connected to a single node in the community detected
 
 communities_pCR <- community_detection(
-  graph_pCR_1, 
+  graph_pCR_1_filtered_cleaned, 
   algorithm = "mcode", 
   D = 0.05, 
-  haircut = TRUE, 
-  fluff = FALSE, 
-  fdt = 0.8, 
-  loops = FALSE)
+  haircut = TRUE)
 
 ```
 
-### Graphing Communities with create_and_save_graph function
+### Graphing Communities with create_and_save_graph_for_community function
 
 ```{r}
-# Subitems for communities_nonpCR
 nonpCR_subcommunities <- c(1, 2, 11, 23, 80)
-
-# Subitems for communities_pCR
 pCR_subcommunities <- c(1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13)
+output_dir <- "../results/"
 
+# Apply the function to each element of nonpCR_subcommunities
+lapply(
+  nonpCR_subcommunities, 
+  create_and_save_graph_for_community, 
+  community = communities_nonpCR, 
+  type = "nonpCR", 
+  seed = GSE182951_diff_nonpCR_pre_post_genes, 
+  output_dir = output_dir)
 
-for (i in nonpCR_subcommunities) {
-  create_and_save_graph(communities_nonpCR, "nonpCR", i, output_dir = "../results/")
-}
-
-# Loop through communities_pCR and create/save graphs
-for (i in pCR_subcommunities) {
-  create_and_save_graph(communities_pCR, "pCR", i, output_dir = "../results/")
-}
+# Apply the function to each element of pCR_subcommunities
+lapply(
+  pCR_subcommunities, 
+  create_and_save_graph_for_community, 
+  community = communities_pCR, 
+  type = "pCR", 
+  seed = GSE182951_diff_nonpCR_pre_post_genes, 
+  output_dir = output_dir)
 
 ```
 
@@ -156,6 +195,10 @@ For gene enrichment analysis, there are two methods over representation analysis
 1.  target gene list of interest, (obtained in the previous analysis)
 2.  background gene list
 3.  the gene sets to be examined over representation.
+
+#### Creation for the biological process list
+
+This loads the gene sets form the MSigDB database, and creates a list of the gene sets for the biological process category (ontology).In a list format.
 
 ```{r}
 
@@ -176,8 +219,11 @@ biological_process_list <- biological_process_df |>
 
 ### Over representation analysis
 
-Over-representation analysis (ORA) is a method used to identify whether certain biological terms or categories (such as gene sets, pathways, or functional annotations) are over-represented in a list of genes or proteins of interest compared to a background set. It involves statistical analysis to determine if the occurrence of specific biological features in the given gene set is higher than would be expected by chance. Here we are performing it for all the communities selected above.
+Over-representation analysis (ORA) is a method used to identify whether certain biological terms or categories (such as gene sets, pathways, or functional annotations) are over-represented in a list of genes or proteins of interest compared to a background set. It involves statistical analysis to determine if the occurrence of specific biological features in the given gene set is higher than would be expected by chance.
 
+As for the graphing we select only the communities with more than 10 nodes as a cut-off for possibilty being a complex, this is somewhat arbitraty but it is as far as we know the standard value used for complex size
+
+#### Community selection
 
 ```{r}
 # Subitems for communities_nonpCR
@@ -188,34 +234,60 @@ pCR_subcommunities <- c(1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13)
 
 ```
 
+#### Over-representation analysis for pCR and nonpCR selected communities
 
 ```{r}
 
-# Create lists to store results
-results_list_nonpCR <- list()
-results_list_pCR <- list()
-
-# Loop for communities_pCR
-for (i in pCR_subcommunities) {
-  results_list_pCR[[str_c("ORA_", i, "_community")]] <- fora(
+results_list_pCR <- lapply(pCR_subcommunities, function(i) {
+  ora_result_pCR <- fora(
     pathways = biological_process_list, 
     genes = V(communities_pCR$communities[[i]])$name, 
     universe = GSE182951_diff_pCR_pre_post_genes, 
     minSize = 10
   )
-  
-}
+  return(ora_result_pCR)
+})
 
-# Loop for communities_nonpCR
-for (i in nonpCR_subcommunities) {
-  results_list_nonpCR[[str_c("ORA_", i, "_community")]] <- fora(
+# Rename the elements in results_list_pCR
+names(results_list_pCR) <- str_c("ORA_", pCR_subcommunities, "_community")
+
+
+results_list_nonpCR <- lapply(nonpCR_subcommunities, function(i) {
+  ora_result_nonpCR <- fora(
     pathways = biological_process_list, 
     genes = V(communities_nonpCR$communities[[i]])$name, 
     universe = GSE182951_diff_nonpCR_pre_post_genes, 
     minSize = 10
   )
-}
+  return(ora_result_nonpCR)
+})
 
+# Rename the elements in results_list_pCR
+names(results_list_nonpCR) <- str_c("ORA_", nonpCR_subcommunities, "_community")
 ```
 
+#### Transforming the results to tibble
 
+This step takes the top 10, by adjusted p-value, over-represented biological process in each community and maps them to a tibble for each group pCR not pCR to aid in interpretation of the networks.
+
+Just to note, the %\>% pipe is used in both cases below after mutate as it brought up an error otherwise, which I was unable to solve, unfortunately. A different method might yield a better result.
+
+```{r}
+results_tibble_pCR <- results_list_pCR |>
+  map(as_tibble) |>
+  map(~ slice_head(.x, n = 10) |> mutate(row_number = row_number() - 1)) %>%
+  set_names(str_c("Community_", seq_along(.))) |>
+  enframe(name = "Community") |>
+  unnest(cols = "value")
+
+results_tibble_nonpCR <- results_list_nonpCR |> 
+  map(as_tibble) |> 
+  map(~ slice_head(.x, n = 10) |> mutate(row_number = row_number() - 1)) %>% 
+  set_names(str_c("Community_", seq_along(.))) |> 
+  enframe(name = "sublist") |> 
+  unnest(cols = "value")
+
+write_csv(results_tibble_pCR, "../data/ORA_pCR.csv")
+write_csv(results_tibble_nonpCR, "../data/ORA_nonpCR.csv")
+
+```

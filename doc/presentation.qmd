@@ -1,0 +1,50 @@
+---
+title: "Presentation"
+format:
+  revealjs:
+    embed-resources: true
+editor: visual
+---
+
+## Introduction: Paper and background
+
+-   Green [^1]
+-   Brown
+-   Purple
+
+[^1]: A footnote
+
+::: aside
+Some additional commentary of more peripheral interest.
+:::
+
+## Introduction: pCR & nonpCR
+
+-   something
+-   something
+
+## Materials and methods: Flowchart
+
+-   potatoe
+
+## Methods: Metadata & Describe
+
+## Methods: Gene Expression Analysis
+
+## Methods: Virtual pull-down and Gene Enrichement Analysis
+
+## Results: Describe
+
+![](../results/figure_05.jpg)
+
+## Results: Gene Expression Analysis
+
+## Results: Virtual pull-down and Gene Enrichement Analysis
+
+-   After the pull-down we found:
+    -   The nonpCR Group has 5 potential complexes or networks with upregulated or downregulated activity when comparing pre and post treatment
+    -   The nonpCR Group has 11 potential complexes or networks with upregulated or downregulated activity when comparing pre- and post-treatment
+-   For each network the main enriched biological processes were identified
+
+
+## Discussion and Conclusion
