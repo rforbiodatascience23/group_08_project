@@ -268,10 +268,9 @@ names(results_list_nonpCR) <- str_c("ORA_", nonpCR_subcommunities, "_community")
 
 #### Transforming the results to tibble
 
+This step takes the top 10, by adjusted p-value, over-represented biological process in each community and maps them to a tibble for each group pCR not pCR to aid in interpretation of the networks.
 
-This step takes the top 10, by adjusted p-value, over-represented biological process in each community and maps them to a tibble for each group pCR not pCR to aid in interpretation of the networks. 
-
-Just to note, the %>% pipe is used in both cases below after mutate as it brought up an error otherwise, which I was unable to solve, unfortunately. A different method might yield a better result.
+Just to note, the %\>% pipe is used in both cases below after mutate as it brought up an error otherwise, which I was unable to solve, unfortunately. A different method might yield a better result.
 
 ```{r}
 results_tibble_pCR <- results_list_pCR |>
@@ -292,5 +291,3 @@ write_csv(results_tibble_pCR, "../data/ORA_pCR.csv")
 write_csv(results_tibble_nonpCR, "../data/ORA_nonpCR.csv")
 
 ```
-
-
