@@ -49,7 +49,7 @@ ggsave("../results/figure_01.jpg",
 
 ```{r}
 
-full_expression_data |>
+full_count_data |>
   group_by(Sample) |>
   summarise(av = mean(Count)) |>
   mutate(Treatment = case_when(Sample %% 2 == 0  ~ "Post-treatment", #even
@@ -58,7 +58,7 @@ full_expression_data |>
 
 ```{r, fig.height=6, fig.width=10}
 
-figure2 <- full_expression_data |>
+figure2 <- full_count_data |>
   group_by(Sample) |>
   summarise(av = mean(Count))|>
   mutate(Treatment = case_when(Sample %% 2 == 0 ~ "Post-treatment",
@@ -94,7 +94,7 @@ ggsave("../results/figure_02.jpg",
 ```{r, fig.height=10, fig.width=20}
 #| echo: false
 
-p1 <- full_expression_data |>
+p1 <- full_count_data |>
   filter(pCR_status == "pCR" &
          subject_ID == "subject_03" &
          Count > 500 &
@@ -121,7 +121,7 @@ p1 <- full_expression_data |>
        y ="Total Counts",
        title ="A Pre-treatment Sample of pCR Patient_07 filterd by 500 > Counts")
 
-p2 <- full_expression_data |>
+p2 <- full_count_data |>
   filter(pCR_status == "pCR" &
          subject_ID == "subject_03" &
          Count > 500 &
@@ -159,7 +159,7 @@ ggsave("../results/figure_03.jpg",
 
 ```{r, fig.height=10, fig.width=20}
 
-p3 <- full_expression_data |>
+p3 <- full_count_data |>
   filter(pCR_status == "no_pCR" &
          subject_ID == "subject_12" &
          Count > 500 &
@@ -189,7 +189,7 @@ p3 <- full_expression_data |>
        y = "Total Counts",
        title = "A Pre-treatment Sample of pCR Patient_12 filterd by 500 > Counts")
 
-p4 <- full_expression_data |>
+p4 <- full_count_data |>
   filter(pCR_status == "no_pCR" &
          subject_ID == "subject_12" &
          Count > 500 &
@@ -229,7 +229,7 @@ ggsave("../results/figure_04.jpg",
 ```
 
 ```{r}
-full_expression_data |>
+full_count_data |>
   filter(Count > 2500 &
          Treatment == "pre_treatment") |>
   select(c(Gene,
@@ -240,7 +240,7 @@ full_expression_data |>
 
 ```{r, fig.height=27, fig.width=27}
 
-p5 <- full_expression_data |>
+p5 <- full_count_data |>
   filter(Count > 2500 &
          Treatment == "pre_treatment") |>
   ggplot(aes(x = Gene,
@@ -263,7 +263,7 @@ p5 <- full_expression_data |>
        y = "Total Counts",
        title = "Total Counts of the Genes before the treatment filtered by pCR_status")
 
-p6 <- full_expression_data |>
+p6 <- full_count_data |>
   filter(Count > 2500 &
          Treatment == "post_treatment") |>
   ggplot(aes(x = Gene,
