@@ -24,8 +24,8 @@ string_database <- translate_database("string")
 # save on the first iteration
 # save(string_database, file = "../data/string_database.RData")
 
-load("../data/GSE182951_diff_nonpCR_pre_post_genes.RData")
-load("../data/GSE182951_diff_pCR_pre_post_genes.RData")
+GSE182951_diff_nonpCR_pre_post_genes <- load("../data/GSE182951_diff_nonpCR_pre_post_genes.RData")
+GSE182951_diff_pCR_pre_post_genes <- load("../data/GSE182951_diff_pCR_pre_post_genes.RData")
 # load("../data/string_database.RData")
 ```
 
