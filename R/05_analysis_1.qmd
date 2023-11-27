@@ -88,3 +88,37 @@ editor: visual
            height = 10,
            device = "jpeg")
     ```
+4. Generate data for analysis 2 non-tidy, because the codes wasn't running after updates.
+```{r}
+GSE182951 <- read_excel("~/r_for_bio_data_science/group_08_project/group_08_project/data/GSE182951_Counts_All_Samples.xlsx")
+#View(GSE182951)
+GSE182951 <- as.data.frame(GSE182951)
+col <- as.data.frame(colnames(GSE182951)[-c(1:2)])
+rownames(GSE182951) <- GSE182951$Name
+Identifier <- GSE182951$Identifier
+Name <- GSE182951$Name
+GSE182951 <- GSE182951[, -c(1:2)]
+
+GSE182951_pCR <- GSE182951[, 1:12]
+GSE182951_non_pCR <- GSE182951[, 13:40]
+
+col_pCR <- as.data.frame(colnames(GSE182951)[1:12])
+col_non_pCR <- as.data.frame(colnames(GSE182951)[13:40])
+dds_pCR <- DESeqDataSetFromMatrix(countData = GSE182951_pCR, colData = col_pCR, ~factor(c(rep(c("pre", "post"), 6))))
+dds_non_pCR <- DESeqDataSetFromMatrix(countData = GSE182951_non_pCR, colData = col_non_pCR, ~factor(c(rep(c("pre", "post"), 14))))
+
+dds_pCR <- DESeq(dds_pCR)
+dds_non_pCR <- DESeq(dds_non_pCR)
+
+GSE182951_diff_pCR_pre_post <- as.data.frame(results(dds_pCR, alpha = 0.05))
+GSE182951_diff_nonpCR_pre_post <- as.data.frame(results(dds_non_pCR, alpha = 0.05))
+
+GSE182951_diff_pCR_pre_post <- GSE182951_diff_pCR_pre_post[order(GSE182951_diff_pCR_pre_post$log2FoldChange), ]
+GSE182951_diff_nonpCR_pre_post <- GSE182951_diff_nonpCR_pre_post[order(GSE182951_diff_nonpCR_pre_post$log2FoldChange), ]
+
+GSE182951_diff_pCR_pre_post_genes <- rownames(filter(GSE182951_diff_pCR_pre_post, log2FoldChange < -1 | log2FoldChange > 1))
+GSE182951_diff_nonpCR_pre_post_genes <- rownames(filter(GSE182951_diff_nonpCR_pre_post, log2FoldChange < -1 | log2FoldChange > 1))
+
+
+```
+
