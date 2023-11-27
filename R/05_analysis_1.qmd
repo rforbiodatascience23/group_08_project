@@ -119,5 +119,8 @@ GSE182951_diff_nonpCR_pre_post <- GSE182951_diff_nonpCR_pre_post[order(GSE182951
 GSE182951_diff_pCR_pre_post_genes <- rownames(filter(GSE182951_diff_pCR_pre_post, log2FoldChange < -1 | log2FoldChange > 1))
 GSE182951_diff_nonpCR_pre_post_genes <- rownames(filter(GSE182951_diff_nonpCR_pre_post, log2FoldChange < -1 | log2FoldChange > 1))
 
+save(GSE182951_diff_pCR_pre_post_genes, file = "~/r_for_bio_data_science/group_08_project/group_08_project/data/GSE182951_diff_pCR_pre_post_genes.RData")
+    
+save(GSE182951_diff_nonpCR_pre_post_genes, file = "~/r_for_bio_data_science/group_08_project/group_08_project/data/GSE182951_diff_nonpCR_pre_post_genes.RData")
 
 ```
