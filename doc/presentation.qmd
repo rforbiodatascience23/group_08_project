@@ -11,7 +11,7 @@ editor: visual
 -   Circulating Exosomal microRNAs as Predictive Biomarkers of Neoadjuvant Chemotherapy Response in Breast Cancer
 
 |                                                |                                                                                                                       |
-|---------------------------|---------------------------------------------|
+|------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
 | `Neoadjuvant chemotherapy (NACT)`              | an increasingly used approach for treatment of breast cancer                                                          |
 | `Circulating Exosomal microRNAs(miRNA)`        | small RNA molecules circulating in bodily fluids, potentially serving as biomarkers for treatment response after NACT |
 | `Pathological Complete Response (pCR)`         | absence of active cancer cells in a tissue from the tumor site after NACT                                             |
@@ -45,7 +45,8 @@ Todorova, Valentina K., et al. "Circulating exosomal microRNAs as predictive bio
 
 ## Methods: Virtual pull-down and Gene Enrichement Analysis {.scrollable}
 
-- Virtual pull-down:
+-   Virtual pull-down:
+
 ```{r}
 #| eval: false
 #| echo: true
@@ -58,7 +59,9 @@ network_pCR <- virtual_pulldown(
 
 
 ```
-- Community detection
+
+-   Community detection
+
 ```{r}
 #| eval: false
 #| echo: true
@@ -70,7 +73,9 @@ communities_list <- community_detection(
   haircut = TRUE) # removes the nodes that are only connected to a single node in the community detected
 
 ```
-- Over representation analysis
+
+-   Over representation analysis
+
 ```{r}
 #| eval: false
 #| echo: true
@@ -84,7 +89,6 @@ ora_result_nonpCR <- fora(
 )
 
 ```
-
 
 ## Results: Gene Expression Analysis
 

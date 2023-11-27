@@ -56,5 +56,3 @@ create_and_save_graph_for_community <- function(community_data, type, subcommuni
 ```
 
 # Conclusion
-
-
