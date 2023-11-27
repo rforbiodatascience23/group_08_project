@@ -10,12 +10,7 @@ editor: visual
 
 -   Circulating Exosomal microRNAs as Predictive Biomarkers of Neoadjuvant Chemotherapy Response in Breast Cancer
 
-|                                                |                                                                                                                       |
-<<<<<<< HEAD
-|------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
-=======
-|--------------------------|----------------------------------------------|
->>>>>>> ca832efd0867fe92d320d095202438e9b965be92
+
 | `Neoadjuvant chemotherapy (NACT)`              | an increasingly used approach for treatment of breast cancer                                                          |
 | `Circulating Exosomal microRNAs(miRNA)`        | small RNA molecules circulating in bodily fluids, potentially serving as biomarkers for treatment response after NACT |
 | `Pathological Complete Response (pCR)`         | absence of active cancer cells in a tissue from the tumor site after NACT                                             |
@@ -60,7 +55,7 @@ Some additional commentary of more peripheral interest.
 
 ## Methods: Gene Expression Analysis
 
-<<<<<<< HEAD
+
 ## Methods: Virtual pull-down and Gene Enrichement Analysis {.scrollable}
 
 -   Virtual pull-down:
@@ -107,17 +102,23 @@ ora_result_nonpCR <- fora(
 )
 
 ```
-=======
-## Methods: Virtual pull-down and Gene Enrichement Analysis
->>>>>>> ca832efd0867fe92d320d095202438e9b965be92
 
 ## Results: Gene Expression Analysis
 
-## Results: Virtual pull-down and Gene Enrichement Analysis
+## Results: Virtual pull-down  {.scrollable}
 
--   After the pull-down we found:
-    -   The nonpCR Group has 5 potential complexes or networks with upregulated or downregulated activity when comparing pre and post treatment
-    -   The nonpCR Group has 11 potential complexes or networks with upregulated or downregulated activity when comparing pre- and post-treatment
--   For each network the main enriched biological processes were identified
+- **Pre vs. Post Treatment**:
+    -   The **nonpCR Group** has 5 potential complexes or networks with upregulated or downregulated activity when comparing pre- and post-treatment
+    -   The **pCR Group** has 11 potential complexes or networks with upregulated or downregulated activity when comparing pre- and post-treatment
+- Example plots:
+
+![](../results/pCR_community_4.png){width="48%"}
+![](../results/nonpCR_community_23.png){width="48%"}
+
+## Results: Gene Enrichement Analysis
+-   For each relevant community in pCR and non_pCR the main enriched biological processes were identified
+- Representative plots:
+
+![](.../results/pCR_community_4){fig-align="center"}
 
 ## Discussion and Conclusion
