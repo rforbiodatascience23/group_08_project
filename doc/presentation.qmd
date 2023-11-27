@@ -43,13 +43,48 @@ Todorova, Valentina K., et al. "Circulating exosomal microRNAs as predictive bio
 
 ## Methods: Gene Expression Analysis
 
-## Methods: Virtual pull-down and Gene Enrichement Analysis
+## Methods: Virtual pull-down and Gene Enrichement Analysis {.scrollable}
 
-- **Virtual pull-down** is a method for detecting protein-protein interactions of the genes of interest by fetching interactions from a database.
+- Virtual pull-down:
+```{r}
+#| eval: false
+#| echo: true
+library(DiscoNet)
+network_pCR <- virtual_pulldown(
+  seed_nodes = seed, 
+  database = string_database, 
+  id_type = "hgnc", 
+  string_confidence_score = 700) # default value
 
-- **Commmunity detection** is a method for detecting densely connected subgraphs in a network. In this project, we used the community detection method to identify the potential complexes or networks of the genes of interest.
 
-- **Over-representation analysis (ORA)** is a method used to identify whether certain biological terms or categories (such as gene sets, pathways, or functional annotations) are over-represented in a list of genes or proteins of interest.
+```
+- Community detection
+```{r}
+#| eval: false
+#| echo: true
+library(DiscoNet)
+communities_list <- community_detection(
+  graph_object, 
+  algorithm = "mcode", # specifies algorithm, in this case MCODE
+  D = 0.05, # threshold of weight percentage of the vertex to be use by MCODE standard value
+  haircut = TRUE) # removes the nodes that are only connected to a single node in the community detected
+
+```
+- Over representation analysis
+```{r}
+#| eval: false
+#| echo: true
+library(fgsea)
+
+ora_result_nonpCR <- fora(
+    pathways = biological_process_list, 
+    genes = gense_in_each_community, 
+    universe = all_genes_in_analysis, 
+    minSize = 10
+)
+
+```
+
 
 ## Results: Gene Expression Analysis
 
