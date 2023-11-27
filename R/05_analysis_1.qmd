@@ -13,7 +13,6 @@ library(DESeq2)
 library(dplyr)
 ```
 
-
 ```{r}
 #| label: Raw_data_normalization
 #GSE182951 <- read_excel("Downloads/GSE182951_Counts_All_Samples.xlsx")
@@ -85,8 +84,8 @@ expression_diff_nonpCR_pre_post_genes <- expression_diff_nonpCR_pre_post |> filt
 length(expression_diff_pCR_pre_post_genes)
 length(expression_diff_nonpCR_pre_post_genes)
 
-save(expression_diff_pCR_pre_post_genes, file = "../data/expression_diffGenes_pCR_pre_post_log2fc15.RData")
-save(expression_diff_nonpCR_pre_post_genes, file = "../data/expression_diffGenes_nonpCR_pre_post_log2fc15.RData")
+write_csv(expression_diff_pCR_pre_post_genes, file = "../data/expression_diffGenes_pCR_pre_post_log2fc15.RData")
+write_csv(expression_diff_nonpCR_pre_post_genes, file = "../data/expression_diffGenes_nonpCR_pre_post_log2fc15.RData")
 ```
 
 3.  **Visualization for differentiate expression genes**
