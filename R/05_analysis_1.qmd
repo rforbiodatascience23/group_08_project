@@ -91,12 +91,76 @@ editor: visual
     #--------------------------------------END----------------------------------------------
     ```
 
-4.  **Visualization for differentiate expression genes**
+4.  **Generate the datasets for volcano plot**
+
+    Determine the upregulated, downregulated, and non-significant genes.
 
     ```{r}
-    GSE182951_DESeq_result <- GSE182951_pCR |>
+    GSE182951_pCR_DESeq_result <- GSE182951_pCR |>
             DESeqDataSetFromMatrix(colData = col_pCR, ~factor(c(rep(c("pre", "post"), 6)))) |>
             DESeq() |>
             results(alpha = 0.05) |>
-            as_tibble(rownames = "Gene")
+            as_tibble(rownames = "Gene") |>
+            mutate(diffgenes = case_when(log2FoldChange > 1 & pvalue < 0.05 ~ "Upregulated",
+                                    log2FoldChange < -1 & pvalue < 0.05 ~ "Downregulated",
+                                    log2FoldChange > -1 & log2FoldChange < 1 ~ "NO",
+                                    pvalue > -1 ~ "NO"))
+
+
+    GSE182951_nonpCR_DESeq_result <- GSE182951_nonpCR |>
+            DESeqDataSetFromMatrix(colData = col_nonpCR, ~factor(c(rep(c("pre", "post"), 14)))) |>
+            DESeq() |>
+            results(alpha = 0.05) |>
+            as_tibble(rownames = "Gene") |>
+            mutate(diffgenes = case_when(log2FoldChange > 1 & pvalue < 0.05 ~ "Upregulated",
+                                    log2FoldChange < -1 & pvalue < 0.05 ~ "Downregulated",
+                                    log2FoldChange > -1 & log2FoldChange < 1 ~ "NO",
+                                    pvalue > -1 ~ "NO"))         
+    ```
+
+```{=html}
+<!-- -->
+```
+5.  **Draw volcano plot**
+
+    ```{r}
+    volcano_plot_pCR <- GSE182951_pCR_DESeq_result |>
+    ggplot(aes(x = log2FoldChange, y = -log10(pvalue), col = diffgenes)) +
+           geom_vline(xintercept = c(-1, 1), col = "gray", linetype = 'dashed') +
+           geom_hline(yintercept = -log10(0.05), col = "gray", linetype = 'dashed') + 
+           geom_point(size = 0.8) +
+           scale_color_manual(values = c("#00AFBB", "grey", "#bb0c00"),
+                     labels = c("Downregulated", "Not significant", "Upregulated")) +
+           labs(color = "Differential expression genes",
+                     x = expression("log"[2]*"FC"),
+                     y = expression("-log"[10]*"p-value")) +
+           scale_x_continuous(breaks = seq(-10, 10, 2)) +
+           ggtitle("Differential expression analysis between pre- and post-treatment patients in pCR group") +
+           theme(plot.title = element_text(hjust = 0.5))
+
+
+    volcano_plot_nonpCR <- GSE182951_nonpCR_DESeq_result |>
+    ggplot(aes(x = log2FoldChange, y = -log10(pvalue), col = diffgenes)) +
+           geom_vline(xintercept = c(-1, 1), col = "gray", linetype = 'dashed') +
+           geom_hline(yintercept = -log10(0.05), col = "gray", linetype = 'dashed') + 
+           geom_point(size = 0.8) +
+           scale_color_manual(values = c("#00AFBB", "grey", "#bb0c00"),
+                     labels = c("Downregulated", "Not significant", "Upregulated")) +
+           labs(color = "Differential expression genes",
+                     x = expression("log"[2]*"FC"),
+                     y = expression("-log"[10]*"p-value")) +
+           scale_x_continuous(breaks = seq(-10, 10, 2)) +
+           ggtitle("Differential expression analysis between pre- and post-treatment patients in non-pCR group") +
+           theme(plot.title = element_text(hjust = 0.5))
+
+    ggsave("../results/volcano_plot_pCR.jpg",
+           plot = volcano_plot_pCR,
+           width = 20,
+           height = 10,
+           device = "jpeg")
+    ggsave("../results/volcano_plot_nonpCR.jpg",
+           plot = volcano_plot_nonpCR,
+           width = 20,
+           height = 10,
+           device = "jpeg")
     ```
