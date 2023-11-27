@@ -4,107 +4,122 @@ format: html
 editor: visual
 ---
 
-1.  **Raw data normalization**
+## Raw data normalization
+
+Question for Suru: What is the point of normalization ? Do you use it anywhere in your analysis?
 
 ```{r}
 library(DESeq2)
-library(readxl)
+library(dplyr)
+```
 
-GSE182951 <- read_excel("Downloads/GSE182951_Counts_All_Samples.xlsx")
+
+```{r}
+#| label: Raw_data_normalization
+#GSE182951 <- read_excel("Downloads/GSE182951_Counts_All_Samples.xlsx")
 #View(GSE182951)
-GSE182951 <- as.data.frame(GSE182951)
-col <- as.data.frame(colnames(GSE182951)[-c(1:2)])
-rownames(GSE182951) <- GSE182951$Name
-Identifier <- GSE182951$Identifier
-Name <- GSE182951$Name
-GSE182951 <- GSE182951[, -c(1:2)]
+#GSE182951 <- as.data.frame(GSE182951)
 
-dds <- DESeqDataSetFromMatrix(countData = GSE182951, colData = col, ~factor(c(rep("pCR", 12), rep("non-pCR", 28))))
+col <- as.data.frame(colnames(count_data)[-c(1:2)])
+rownames(count_data) <- count_data$Name
+Identifier <- count_data$Identifier
+Name <- count_data$Name
+count_data_1 <- count_data[, -c(1:2)]  # I changed this so that it doesn't overwrite count_data, I guess since yo've been downloading it each time it hasn't been an issue, but with my changes this is necessary - let me know if you don't like it :)
+
+
+dds <- DESeqDataSetFromMatrix(countData = count_data_1, colData = col, ~factor(c(rep("pCR", 12), rep("non-pCR", 28))))
 dds <- DESeq(dds)
 normalized_counts <- counts(dds, normalized = TRUE)
 test <- data.frame("Name" = Name, "Identifier" = Identifier)
-GSE182951_normalized <- cbind(test, normalized_counts)
-rownames(GSE182951_normalized) <- 1:dim(GSE182951_normalized)[1]
-save(GSE182951_normalized, file = "GSE182951_normalized.RData")
+count_data_normalized <- cbind(test, normalized_counts)
+rownames(count_data_normalized) <- 1:dim(count_data_normalized)[1]
+
+#save file
+write_csv(count_data_normalized, file = "../data/count_data_normalized.RData")
 ```
 
-2.  **Differential expression analysis**
+## Differential expression analysis
 
 ```{r}
-library(DESeq2)
-library(readxl)
-library(dplyr)
+#| label: Differential Expression Analysis
+#library(DESeq2)
+#library(readxl)
 
-GSE182951 <- read_excel("~/r_for_bio_data_science/group_08_project/group_08_project/data/GSE182951_Counts_All_Samples.xlsx")
-GSE182951 <- as.data.frame(GSE182951)
-col <- as.data.frame(colnames(GSE182951)[-c(1:2)])
-rownames(GSE182951) <- GSE182951$Name
-Identifier <- GSE182951$Identifier
-Name <- GSE182951$Name
-GSE182951 <- GSE182951[, -c(1:2)]
+#GSE182951 <- read_excel("~/r_for_bio_data_science/group_08_project/group_08_project/data/GSE182951_Counts_All_Samples.xlsx")
+#GSE182951 <- as.data.frame(GSE182951)
 
+
+col <- as.data.frame(colnames(count_data)[-c(1:2)])
+rownames(count_data) <- count_data$Name
+Identifier <- count_data$Identifier
+Name <- count_data$Name
+count_data_2 <- count_data[, -c(1:2)]
 #I. pCR non-pCR
-dds <- DESeqDataSetFromMatrix(countData = GSE182951, colData = col, ~factor(c(rep("pCR", 12), rep("non-pCR", 28))))
+dds <- DESeqDataSetFromMatrix(countData = count_data_2, colData = col, ~factor(c(rep("pCR", 12), rep("non-pCR", 28))))
 dds <- DESeq(dds)
 
-GSE182951_diff <- results(dds, alpha = 0.05)
-GSE182951_diff_df <- as.data.frame(GSE182951_diff)
-GSE182951_diff_genes <- rownames(filter(GSE182951_diff_df, padj < 0.05))
+# I tried to switch to expression instead of count_data since we are working with expression data now - let me know if that makes sense name wise.
+
+expression_diff <- results(dds, alpha = 0.05)
+expression_diff_df <- as.data.frame(expression_diff)
+expression_diff_genes <- rownames(filter(expression_diff_df, padj < 0.05))
 
 #II. pCR: pre pos  non-PCR: pre pos
-GSE182951_pCR <- GSE182951[, 1:12]
-GSE182951_non_pCR <- GSE182951[, 13:40]
+expression_pCR <- count_data_2[,1:12]
+expression_non_pCR <- count_data_2[, 13:40]
 
-col_pCR <- as.data.frame(colnames(GSE182951)[1:12])
-col_non_pCR <- as.data.frame(colnames(GSE182951)[13:40])
-dds_pCR <- DESeqDataSetFromMatrix(countData = GSE182951_pCR, colData = col_pCR, ~factor(c(rep(c("pre", "post"), 6))))
-dds_non_pCR <- DESeqDataSetFromMatrix(countData = GSE182951_non_pCR, colData = col_non_pCR, ~factor(c(rep(c("pre", "post"), 14))))
+col_pCR <- as.data.frame(colnames(count_data_2)[1:12])
+col_non_pCR <- as.data.frame(colnames(count_data_2)[13:40])
+dds_pCR <- DESeqDataSetFromMatrix(countData = expression_pCR, colData = col_pCR, ~factor(c(rep(c("pre", "post"), 6))))
+dds_non_pCR <- DESeqDataSetFromMatrix(countData = expression_non_pCR, colData = col_non_pCR, ~factor(c(rep(c("pre", "post"), 14))))
 
 dds_pCR <- DESeq(dds_pCR)
 dds_non_pCR <- DESeq(dds_non_pCR)
 
-GSE182951_diff_pCR_pre_post <- as.data.frame(results(dds_pCR, alpha = 0.05))
-GSE182951_diff_nonpCR_pre_post <- as.data.frame(results(dds_non_pCR, alpha = 0.05))
+expression_diff_pCR_pre_post <- as.data.frame(results(dds_pCR, alpha = 0.05))
+expression_diff_nonpCR_pre_post <- as.data.frame(results(dds_non_pCR, alpha = 0.05))
 
-GSE182951_diff_pCR_pre_post_genes <- GSE182951_diff_pCR_pre_post |> filter(log2FoldChange > 1.5 | log2FoldChange < -1.5) |> rownames()
-GSE182951_diff_nonpCR_pre_post_genes <- GSE182951_diff_nonpCR_pre_post |> filter(log2FoldChange > 1.5 | log2FoldChange < -1.5) |> rownames()
+expression_diff_pCR_pre_post_genes <- expression_diff_pCR_pre_post |> filter(log2FoldChange > 1.5 | log2FoldChange < -1.5) |> rownames()
+expression_diff_nonpCR_pre_post_genes <- expression_diff_nonpCR_pre_post |> filter(log2FoldChange > 1.5 | log2FoldChange < -1.5) |> rownames()
 
-length(GSE182951_diff_pCR_pre_post_genes)
-length(GSE182951_diff_nonpCR_pre_post_genes)
+length(expression_diff_pCR_pre_post_genes)
+length(expression_diff_nonpCR_pre_post_genes)
 
-save(GSE182951_diff_pCR_pre_post_genes, file = "/home/people/s233405/r_for_bio_data_science/group_08_project/group_08_project/data/GSE182951_diffGenes_pCR_pre_post_log2fc15.RData")
-save(GSE182951_diff_nonpCR_pre_post_genes, file = "/home/people/s233405/r_for_bio_data_science/group_08_project/group_08_project/data/GSE182951_diffGenes_nonpCR_pre_post_log2fc15.RData")
+save(expression_diff_pCR_pre_post_genes, file = "../data/expression_diffGenes_pCR_pre_post_log2fc15.RData")
+save(expression_diff_nonpCR_pre_post_genes, file = "../data/expression_diffGenes_nonpCR_pre_post_log2fc15.RData")
 ```
 
 3.  **Visualization for differentiate expression genes**
 
 ```{r}
 #Order the log2 fold change value for obtaining upregulated and downregulated genes
-GSE182951_diff_pCR_pre_post <- GSE182951_diff_pCR_pre_post[order(GSE182951_diff_pCR_pre_post$log2FoldChange), ]
-GSE182951_diff_nonpCR_pre_post <- GSE182951_diff_nonpCR_pre_post[order(GSE182951_diff_nonpCR_pre_post$log2FoldChange), ]
+expression_diff_pCR_pre_post <- expression_diff_pCR_pre_post[order(expression_diff_pCR_pre_post$log2FoldChange), ]
+expression_diff_nonpCR_pre_post <- expression_diff_nonpCR_pre_post[order(expression_diff_nonpCR_pre_post$log2FoldChange), ]
 
 #Group samples into pre-treatment and post-treatment for pCR and non-pCR respectively
-GSE182951_pCR_for_heatmap <- cbind(GSE182951_pCR[, c(1,3,5,7,9,11)], GSE182951_pCR[, c(2,4,6,8,10,12)])
-GSE182951_non_pCR_for_heatmap <- cbind(GSE182951_non_pCR[, c(1,3,5,7,9,11,13,15,17,19,21,23,25,27)],
-                                       GSE182951_non_pCR[, c(2,4,6,8,10,12,14,16,18,20,22,24,26,28)])
+expression_pCR_for_heatmap <- cbind(expression_pCR[, c(1,3,5,7,9,11)], expression_pCR[, c(2,4,6,8,10,12)])
+expression_non_pCR_for_heatmap <- cbind(expression_non_pCR[, c(1,3,5,7,9,11,13,15,17,19,21,23,25,27)],
+                                       expression_non_pCR[, c(2,4,6,8,10,12,14,16,18,20,22,24,26,28)])
 
 #Repeat the process choosing differentiates expression genes (no difference from the previous, but in an order of log2 fold change from low to high)
-GSE182951_diff_pCR_pre_post_genes <- rownames(filter(GSE182951_diff_pCR_pre_post, log2FoldChange < -1 | log2FoldChange > 1))
-GSE182951_diff_nonpCR_pre_post_genes <- rownames(filter(GSE182951_diff_nonpCR_pre_post, log2FoldChange < -1 | log2FoldChange > 1))
+expression_diff_pCR_pre_post_genes <- rownames(filter(expression_diff_pCR_pre_post, log2FoldChange < -1 | log2FoldChange > 1))
+expression_diff_nonpCR_pre_post_genes <- rownames(filter(expression_diff_nonpCR_pre_post, log2FoldChange < -1 | log2FoldChange > 1))
 
 #Get index of differentiate expression data for reshaping expression data
-ordered_gene_pos_pCR <- match(GSE182951_diff_pCR_pre_post_genes, rownames(GSE182951_pCR_for_heatmap))
-ordered_gene_pos_non_pCR <- match(GSE182951_diff_nonpCR_pre_post_genes, rownames(GSE182951_non_pCR_for_heatmap))
+ordered_gene_pos_pCR <- match(expression_diff_pCR_pre_post_genes, rownames(expression_pCR_for_heatmap))
+ordered_gene_pos_non_pCR <- match(expression_diff_nonpCR_pre_post_genes, rownames(expression_non_pCR_for_heatmap))
 
 #Prepare datasets for heatmap, i.e., datasets with ordered genes (log2 fold change from low to #high)
-GSE182951_pCR_for_heatmap <- GSE182951_pCR_for_heatmap[ordered_gene_pos_pCR, ]
-GSE182951_non_pCR_for_heatmap <- GSE182951_non_pCR_for_heatmap[ordered_gene_pos_non_pCR, ]
+expression_pCR_for_heatmap <- expression_pCR_for_heatmap[ordered_gene_pos_pCR, ]
+expression_non_pCR_for_heatmap <- expression_non_pCR_for_heatmap[ordered_gene_pos_non_pCR, ]
 
-GSE182951_pCR_for_heatmap$gene <- rownames(GSE182951_pCR_for_heatmap)
-GSE182951_pCR_for_heatmap_long <- melt(GSE182951_pCR_for_heatmap, id.vars = "gene", measure.vars = colnames(GSE182951_pCR_for_heatmap)[1:12])
+expression_pCR_for_heatmap$gene <- rownames(expression_pCR_for_heatmap)
+
+# THIS SHOULD BE PIVOT LONGER
+expression_pCR_for_heatmap_long <- melt(expression_pCR_for_heatmap, id.vars = "gene", measure.vars = colnames(expression_pCR_for_heatmap)[1:12])
 
 #Plot heatmap
-ggplot(GSE182951_pCR_for_heatmap_long, aes(x = variable, y = gene)) +
+ggplot(expression_pCR_for_heatmap_long, aes(x = variable, y = gene)) +
   geom_tile() +
   scale_fill_gradient2(low = "blue", mid = "white", high = "red", na.value = "gray") +
   labs(title = "Gene Expression Heatmap (Thresholded)", x = "Samples", y = "Genes") +
