@@ -32,10 +32,10 @@ Some additional commentary of more peripheral interest.
 
 
 
-
-## Results: Describe
+## Results: Metadata & Describe
 
 ![Figure 1](../results/figure_05.jpg)
+
 
 
 ## Results: Gene Expression Analysis
