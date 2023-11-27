@@ -7,8 +7,13 @@ editor: visual
 ---
 
 ## Introduction: Paper and background
-- Turn off alarm
-- Get out of bed
+- Green ^[A footnote]
+- Brown
+- Purple
+
+::: aside
+Some additional commentary of more peripheral interest.
+:::
 
 ## Introduction: pCR & nonpCR
 - something
@@ -26,7 +31,11 @@ editor: visual
 ## Methods: Virtual pull-down and Gene Enrichement Analysis
 
 
+
+
 ## Results: Describe
+
+![Figure 1](../results/figure_05.jpg)
 
 
 ## Results: Gene Expression Analysis
