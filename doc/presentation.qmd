@@ -36,7 +36,7 @@ Some additional commentary of more peripheral interest.
 ## Introduction: pCR & nonpCR
 
 -   something
--   something
+-   somethin
 
 ## Materials and methods: Flowchart
 
