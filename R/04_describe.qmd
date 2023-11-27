@@ -71,7 +71,7 @@ full_expression_data|>
 
 To represent this data set is not that easy because the data is huge. So we arbitrarily created some plots to be able to show what our data looks like.
 
-In this figure, we illustrate the average gene expression count of all the samples by the treatment.
+In this figure, we illustrate the average read counts of all the samples by the treatment.
 
 ```{r, fig.height=6, fig.width=10}
 #| echo: false
@@ -98,7 +98,7 @@ figure2 <- full_expression_data |>
                                    hjust = 0.4))+
   labs(x = "Samples",
        y = "Average Read Counts",
-       title = "The average gene expression count of all the samples by the treatment",
+       title = "The average read counts of all the samples by the treatment",
        legend = "Treatment")
 
 print(figure2)
@@ -110,7 +110,7 @@ ggsave("../results/figure_02.jpg",
        device = "jpeg")
 ```
 
-The 3. figure displays the differences in gene expression counts between the pre-and post-treatment by the genes. As an example, we arbitrary chose 1-1 pCR-patient from each treatment type and filtered the gene expression counts.
+The 3. figure displays the differences in read counts between the pre-and post-treatment by the genes. As an example, we arbitrary chose 1-1 pCR-patient from each treatment type and filtered the gene expression counts.
 
 ```{r, fig.height=10, fig.width=20}
 #| echo: false
@@ -179,7 +179,7 @@ ggsave("../results/figure_03.jpg",
        device = "jpeg")
 ```
 
-The 4. figure displays the differences in gene expression counts between the pre-and post-treatment by genes. As an example, we arbitrary chose 1-1 no_pCR-patient from each treatment type and filtered the gene expression counts.
+The 4. figure displays the differences in read counts between the pre-and post-treatment by genes. As an example, we arbitrary chose 1-1 no_pCR-patient from each treatment type and filtered the read counts.
 
 ```{r, fig.height=10, fig.width=20}
 #| echo: false
@@ -254,7 +254,7 @@ ggsave("../results/figure_04.jpg",
        device = "jpeg")
 ```
 
-Our last figure illustrates the differences in gene expression counts between the no_pCR and pCR patients in each treatment type by genes.
+Our last figure illustrates the differences in read counts between the no_pCR and pCR patients in each treatment type by genes.
 
 ```{r, fig.height=27, fig.width=27}
 #| echo: false
