@@ -10,22 +10,28 @@ editor: visual
 
 -   Circulating Exosomal microRNAs as Predictive Biomarkers of Neoadjuvant Chemotherapy Response in Breast Cancer
 
+## Slide Transitions {.scrollable}
+
 |                                                |                                                                                                                       |
-|--------------------------|----------------------------------------------|
+|-------------------|-----------------------------------------------------|
 | `Neoadjuvant chemotherapy (NACT)`              | an increasingly used approach for treatment of breast cancer                                                          |
 | `Circulating Exosomal microRNAs(miRNA)`        | small RNA molecules circulating in bodily fluids, potentially serving as biomarkers for treatment response after NACT |
 | `Pathological Complete Response (pCR)`         | absence of active cancer cells in a tissue from the tumor site after NACT                                             |
 | `Non-Pathological Complete Response (non-pCR)` | presence of active cancer cells in a tissue from the tumor site after the treatment                                   |
 
--   The purpose of the study: to investigate whether circulating exosomal microRNAs could predict pCR in breast cancer patients treated with NACT
-
 ::: footer
 Todorova, Valentina K., et al. "Circulating exosomal microRNAs as predictive biomarkers of neoadjuvant chemotherapy response in breast cancer." Current Oncology 29.2 (2022): 613-630.
 :::
 
-::: aside
-Some additional commentary of more peripheral interest.
-:::
+## Our Goals of Study:
+
+-   The purpose of the study: to investigate whether circulating exosomal microRNAs could predict pCR in breast cancer patients treated with NACT
+
+-   
+
+-   
+
+-   
 
 ## Experimental Methods:
 
@@ -36,16 +42,6 @@ Some additional commentary of more peripheral interest.
 -   6 patients - pCR
 
     14 patients - non pCR
-
-::: columns
-::: {.column width="40%"}
-contents...
-:::
-
-::: {.column width="60%"}
-contents...
-:::
-:::
 
 ## Materials and methods: Flowchart
 
