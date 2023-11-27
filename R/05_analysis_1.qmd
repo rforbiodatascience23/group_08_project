@@ -52,13 +52,19 @@ editor: visual
     ## iii) Extract differential expressed genes from pCR and non-pCR group, respectively
     ########################################################################################
     GSE182951_diffGenes_pCR_pre_post <- GSE182951_pCR |>
+      
       #Create DESeq2 object
-      DESeqDataSetFromMatrix(colData = col_pCR, ~factor(c(rep(c("pre", "post"), 6)))) |>
+      DESeqDataSetFromMatrix(colData = col_pCR, 
+                             ~factor(c(rep(c("pre", "post"), 6)))) |>
+      
       #Performing differential expression analysis
       DESeq() |>
+      
       #Set significant level as 0.05 and extract the result
       results(alpha = 0.05) |>
+      
       as_tibble(rownames = "Gene") |>
+      
       #Extract those genes with log2FoldChange larger than 1 or smaller than -1
       filter(log2FoldChange > 1 | log2FoldChange < -1) |> 
       select(Gene)
