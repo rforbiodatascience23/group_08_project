@@ -7,7 +7,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
+<<<<<<< HEAD
 <title>04_describe</title>
+=======
+<title>02_clean</title>
+>>>>>>> ab9ee5f0b7792d09b0eb8148f73a7b34020555a9
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -108,7 +112,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
+<<<<<<< HEAD
 <h1 class="title">04_describe</h1>
+=======
+<h1 class="title">02_clean</h1>
+>>>>>>> ab9ee5f0b7792d09b0eb8148f73a7b34020555a9
 </div>
 
 
@@ -123,8 +131,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
+<<<<<<< HEAD
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
+=======
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+</section>
+>>>>>>> ab9ee5f0b7792d09b0eb8148f73a7b34020555a9
 <section id="load-data" class="level2">
 <h2 class="anchored" data-anchor-id="load-data">Load Data</h2>
 <div class="cell">
@@ -139,6 +153,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(raw_dir)){</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(<span class="at">path =</span> raw_dir)</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<<<<<<< HEAD
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(<span class="fu">str_c</span>(raw_dir, data_file))){</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">download.file</span>(</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">url =</span> <span class="fu">str_c</span>(data_loc),</span>
@@ -183,10 +198,62 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First we explore the data</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>expression_data <span class="sc">|&gt;</span> </span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sample_n</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+=======
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(<span class="fu">str_c</span>(raw_dir, data_file))){</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">download.file</span>(</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">url =</span> <span class="fu">str_c</span>(data_loc),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">destfile =</span> <span class="fu">str_c</span>(raw_dir, data_file))</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>expression_data <span class="ot">=</span> <span class="fu">read_excel</span>(<span class="fu">str_c</span>(raw_dir, data_file))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="creating-the-metadata" class="level1">
+<h1><strong>Creating the metadata</strong></h1>
+<p>The metadata was not available online, but based on the paper we know that:</p>
+<ol type="1">
+<li>Each sample is paired like this: 1 &amp; 2, 3 &amp; 4, etc.</li>
+<li>Each sample pair is either pre-treatment or post-treatment. With uneven numbers = pre-treatment and uneven numbers = post-treatment.</li>
+<li>Samples: 1-12 belong to group A - pCR, the rest belong to group B - no pCR.</li>
+</ol>
+<p>From this we can create a metadata table:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>meta_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ID =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">40</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Adding pre/post treatment to the dataset</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Treatment =</span> <span class="fu">case_when</span>(<span class="fu">str_ends</span>(ID,<span class="st">"[13579]"</span>) <span class="sc">~</span> <span class="st">"pre_treatment"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">str_ends</span>(ID,<span class="st">"[^13579]"</span>) <span class="sc">~</span> <span class="st">"post_treatment"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Adding corresponding Person ID</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">subject_ID =</span> <span class="fu">case_when</span>(Treatment <span class="sc">==</span> <span class="st">"pre_treatment"</span> <span class="sc">~</span> (ID<span class="sc">+</span><span class="dv">1</span>)<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                                Treatment <span class="sc">==</span> <span class="st">"post_treatment"</span> <span class="sc">~</span> ID<span class="sc">/</span><span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">subject_ID =</span> <span class="fu">case_when</span>(subject_ID <span class="sc">&lt;</span> <span class="dv">10</span> <span class="sc">~</span> <span class="fu">str_c</span>(<span class="st">"subject_0"</span>, subject_ID),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                                subject_ID <span class="sc">&gt;=</span> <span class="dv">10</span> <span class="sc">~</span> <span class="fu">str_c</span>(<span class="st">"subject_"</span>, subject_ID))) <span class="sc">|&gt;</span> </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Adding pCR status</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pCR_status =</span> <span class="fu">case_when</span>(ID <span class="sc">&lt;=</span> <span class="dv">12</span> <span class="sc">~</span> <span class="st">"pCR"</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                                ID <span class="sc">&gt;</span> <span class="dv">12</span> <span class="sc">~</span> <span class="st">"no_pCR"</span>))</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(<span class="at">x =</span> meta_data,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>          <span class="at">file =</span> <span class="st">"../data/meta_data.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="cleaning-the-data" class="level1">
+<h1>Cleaning the data</h1>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First we explore the data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>expression_data <span class="sc">|&gt;</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sample_n</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+>>>>>>> ab9ee5f0b7792d09b0eb8148f73a7b34020555a9
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 42
    Name       Identifier      20756_001_genes - Total c…¹ 20756_002_genes - To…²
    &lt;chr&gt;      &lt;chr&gt;                                 &lt;dbl&gt;                  &lt;dbl&gt;
+<<<<<<< HEAD
  1 NUDT12     ENSG00000112874                           1                      0
  2 AC006145.1 ENSG00000223770                           3                      0
  3 AC110767.1 ENSG00000249441                           0                      0
@@ -197,6 +264,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
  8 FASTKD1    ENSG00000138399                          76                      0
  9 KMT2E-AS1  ENSG00000239569                           0                      0
 10 AC090236.1 ENSG00000267396                           0                      0
+=======
+ 1 AC009554.2 ENSG00000285863                           0                      0
+ 2 RN7SL369P  ENSG00000241542                           0                      0
+ 3 WIPF1      ENSG00000115935                           3                      0
+ 4 AL513220.1 ENSG00000284748                           0                      0
+ 5 UCKL1-AS1  ENSG00000280213                           1                      0
+ 6 DOCK2      ENSG00000134516                        1072                     45
+ 7 RNU7-113P  ENSG00000238735                           0                      0
+ 8 LINC01140  ENSG00000267272                           7                      4
+ 9 Z83843.1   ENSG00000271533                           0                      0
+10 IL17REL    ENSG00000188263                          15                      0
+>>>>>>> ab9ee5f0b7792d09b0eb8148f73a7b34020555a9
 # ℹ abbreviated names: ¹​`20756_001_genes - Total counts`,
 #   ²​`20756_002_genes - Total counts`
 # ℹ 38 more variables: `20756_003_genes - Total counts` &lt;dbl&gt;,
@@ -206,6 +285,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 #   `20756_007_genes - Total counts` &lt;dbl&gt;, …</code></pre>
 </div>
 </div>
+<<<<<<< HEAD
 <p>Column:</p>
 <p><strong>Name</strong> which include the gene names.</p>
 <p><strong>Identifier</strong> which includes a link to the ENSG identifier for the gene.</p>
@@ -215,11 +295,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Rows = Observations</p>
 <p>Each cell = values.</p>
 <p><strong>Cleaning:</strong></p>
+=======
+<p><strong>Columns:</strong></p>
+<ol type="1">
+<li><strong>Name</strong> which include the gene names.</li>
+<li><strong>Identifier</strong> which includes a link to the ENSG identifier for the gene.</li>
+<li>40 columns for each sample. They start with 20756_0XX_genes - Total counts. Where XX is the number of the sample.</li>
+</ol>
+<p>Our dataset does not includes any N/A values, so we do not need to take that into account when cleaning.</p>
+<p><strong>Cleaning procedure:</strong></p>
+>>>>>>> ab9ee5f0b7792d09b0eb8148f73a7b34020555a9
 <ul>
 <li><p>Create tidy data</p></li>
 <li><p>Clean up names</p></li>
 </ul>
 <div class="cell">
+<<<<<<< HEAD
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>expression_data_long <span class="ot">&lt;-</span> expression_data <span class="sc">|&gt;</span> </span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Pivot longer to make into tidy data set.</span></span>
@@ -252,11 +343,27 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 10 A1BG  ENSG00000121410     10     0
 # ℹ 1,814,870 more rows</code></pre>
 </div>
+=======
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>expression_data_long <span class="ot">&lt;-</span> expression_data <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Pivot longer to make into tidy data set.</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"20756"</span>),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"Sample"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"Count"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Change to sample number</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Sample =</span> <span class="fu">as.numeric</span>(<span class="fu">str_sub</span>(Sample, </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">start =</span> <span class="dv">7</span>, </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">end =</span> <span class="dv">9</span>))) <span class="sc">|&gt;</span>  </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Rename Name column </span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">"Gene"</span> <span class="ot">=</span> <span class="st">"Name"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+>>>>>>> ab9ee5f0b7792d09b0eb8148f73a7b34020555a9
 </div>
 </section>
 <section id="joining-meta-data-and-expression-data" class="level1">
 <h1>Joining meta data and expression data</h1>
 <div class="cell">
+<<<<<<< HEAD
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Connect the expression dataset Sample with the metadata set ID</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>full_expression_data <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(<span class="at">x =</span> expression_data_long, </span>
@@ -531,6 +638,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="function" class="level1">
 <h1>Function</h1>
+=======
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Connect the expression dataset Sample with the metadata set ID</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>full_expression_data <span class="ot">&lt;-</span> <span class="fu">full_join</span>(<span class="at">x =</span> expression_data_long, </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">y =</span> meta_data, </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">join_by</span>(Sample <span class="sc">==</span> ID))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(full_expression_data, </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>          <span class="st">"../data/full_expression_data.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>quarto::quarto_render(input = “00_all.qmd”) file.rename(from = “00_all.html”, to = “../results/00_all.html”)</p>
+>>>>>>> ab9ee5f0b7792d09b0eb8148f73a7b34020555a9
 </section>
 
 </main>
