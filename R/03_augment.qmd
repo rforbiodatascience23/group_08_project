@@ -5,6 +5,7 @@ editor: visual
 ---
 
 # Augment
+
 1.  **Load the necessary packages**
 
     ```{r}
@@ -83,9 +84,9 @@ editor: visual
     ########################################################################################
     ## iv) Save our diff genes as RData file and store them in data folder
     ########################################################################################
-    
-    save(GSE182951_diffGenes_pCR_pre_post, file = "../data/GSE182951_diffGenes_pCR_pre_post.RData")
-    
-    save(GSE182951_diffGenes_nonpCR_pre_post, file = "../data/GSE182951_diffGenes_nonpCR_pre_post.RData")
+
+    save(GSE182951_diffGenes_pCR_pre_post, file = "../data/GSE182951_diff_pCR_pre_post_genes.RData")
+
+    save(GSE182951_diffGenes_nonpCR_pre_post, file = "../data/GSE182951_diff_nonpCR_pre_post_genes.RData")
     #--------------------------------------END----------------------------------------------
     ```

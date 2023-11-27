@@ -1,5 +1,5 @@
 ---
-title: "Breast cancer pre- and post-treatment gene expresion anlyses "
+title: "Presentation"
 format:
   revealjs:
     embed-resources: true
@@ -10,8 +10,7 @@ editor: visual
 
 -   Circulating Exosomal microRNAs as Predictive Biomarkers of Neoadjuvant Chemotherapy Response in Breast Cancer
 
-|                                                |                                                                                                                       |
-|---------------------------|---------------------------------------------|
+
 | `Neoadjuvant chemotherapy (NACT)`              | an increasingly used approach for treatment of breast cancer                                                          |
 | `Circulating Exosomal microRNAs(miRNA)`        | small RNA molecules circulating in bodily fluids, potentially serving as biomarkers for treatment response after NACT |
 | `Pathological Complete Response (pCR)`         | absence of active cancer cells in a tissue from the tumor site after NACT                                             |
@@ -23,7 +22,20 @@ editor: visual
 Todorova, Valentina K., et al. "Circulating exosomal microRNAs as predictive biomarkers of neoadjuvant chemotherapy response in breast cancer." Current Oncology 29.2 (2022): 613-630.
 :::
 
+-   Purple
+
+::: footer
+Todorova, Valentina K., et al. "Circulating exosomal microRNAs as predictive biomarkers of neoadjuvant chemotherapy response in breast cancer." Current Oncology 29.2 (2022): 613-630.
+:::
+
+::: aside
+Some additional commentary of more peripheral interest.
+:::
+
 ## Introduction: pCR & nonpCR
+
+-   something
+-   somethin
 
 ## Materials and methods: Flowchart
 
@@ -43,30 +55,70 @@ Todorova, Valentina K., et al. "Circulating exosomal microRNAs as predictive bio
 
 ## Methods: Gene Expression Analysis
 
-## Methods: Virtual pull-down and Gene Enrichement Analysis
 
-- **Virtual pull-down** is a method for detecting protein-protein interactions of the genes of interest by fetching interactions from a database.
+## Methods: Virtual pull-down and Gene Enrichement Analysis {.scrollable}
 
-- **Commmunity detection** is a method for detecting densely connected subgraphs in a network. In this project, we used the community detection method to identify the potential complexes or networks of the genes of interest.
+-   Virtual pull-down:
 
-- **Over-representation analysis (ORA)** is a method used to identify whether certain biological terms or categories (such as gene sets, pathways, or functional annotations) are over-represented in a list of genes or proteins of interest.
+```{r}
+#| eval: false
+#| echo: true
+library(DiscoNet)
+network_pCR <- virtual_pulldown(
+  seed_nodes = seed, 
+  database = string_database, 
+  id_type = "hgnc", 
+  string_confidence_score = 700) # default value
+
+
+```
+
+-   Community detection
+
+```{r}
+#| eval: false
+#| echo: true
+library(DiscoNet)
+communities_list <- community_detection(
+  graph_object, 
+  algorithm = "mcode", # specifies algorithm, in this case MCODE
+  D = 0.05, # threshold of weight percentage of the vertex to be use by MCODE standard value
+  haircut = TRUE) # removes the nodes that are only connected to a single node in the community detected
+
+```
+
+-   Over representation analysis
+
+```{r}
+#| eval: false
+#| echo: true
+library(fgsea)
+
+ora_result_nonpCR <- fora(
+    pathways = biological_process_list, 
+    genes = gense_in_each_community, 
+    universe = all_genes_in_analysis, 
+    minSize = 10
+)
+
+```
 
 ## Results: Gene Expression Analysis
 
-## Results: Virtual pull-down {.scrollable}
+## Results: Virtual pull-down  {.scrollable}
 
--   **Pre vs. Post Treatment:**
-    -   The **nonpCR Group** has 5 potential complexes or networks with upregulated or downregulated activity when comparing pre and post treatment
-    -   The **nonpCR Group** has 11 potential complexes or networks with upregulated or downregulated activity when comparing pre- and post-treatment
+- **Pre vs. Post Treatment**:
+    -   The **nonpCR Group** has 5 potential complexes or networks with upregulated or downregulated activity when comparing pre- and post-treatment
+    -   The **pCR Group** has 11 potential complexes or networks with upregulated or downregulated activity when comparing pre- and post-treatment
+- Example plots:
 
-![](../results/pCR_community_4.png){width="45%"} ![](../results/nonpCR_community_23.png){width="45%"}
+![](../results/pCR_community_4.png){width="48%"}
+![](../results/nonpCR_community_23.png){width="48%"}
 
-## Results: Gene Enrichment Analysis
+## Results: Gene Enrichement Analysis
+-   For each relevant community in pCR and non_pCR the main enriched biological processes were identified
+- Representative plots:
 
--   For each network the main enriched biological processes were identified
-
--   This is just a representative plot:
-
-![](../results/ORA_plot.png){fig-align="center"}
+![](.../results/pCR_community_4){fig-align="center"}
 
 ## Discussion and Conclusion
