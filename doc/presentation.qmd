@@ -1,5 +1,5 @@
 ---
-title: "Presentation_2"
+title: "Presentation"
 format:
   revealjs:
     embed-resources: true
