@@ -4,25 +4,25 @@ format: html
 editor: visual
 ---
 
-```{r}
-library(tidyverse)
-#expression_data = read_csv("../data/_raw/expression_data.csv")
+# Cleaning the data
 
+```{r}
+#| warning: false
+library("tidyverse")
 ```
 
+First we explore the data
+
 ```{r}
-# First we explore the data
-expression_data |> 
+reads_data |> 
   sample_n(10)
 ```
 
-Column:
+**Columns:**
 
-**Name** which include the gene names.
-
-**Identifier** which includes a link to the ENSG identifier for the gene.
-
-Then 40 columns for each sample. They start with 20756_0XX_genes - Total counts. Where XX is the number of the sample
+1.  **Name** which include the gene names.
+2.  **Identifier** which includes a link to the ENSG identifier for the gene.
+3.  Then 40 columns, one for each sample. They start with 20756_0XX_genes - Total counts. Where XX is the number of the sample
 
 So we need to clean the data and change it into tidy data meaning:
 
@@ -32,14 +32,11 @@ Rows = Observations
 
 Each cell = values.
 
-**Cleaning:**
-
--   Create tidy data
-
--   Clean up names
+## Tidying the data
 
 ```{r}
-expression_data_long <- expression_data |> 
+#| label: Tidying data
+reads_data_long <- reads_data |> 
   
   #Pivot longer to make into tidy data set.
   pivot_longer(cols = starts_with("20756"),
@@ -50,26 +47,22 @@ expression_data_long <- expression_data |>
   mutate(Sample = as.numeric(str_sub(Sample, 
                                      start = 7, 
                                      end = 9))) |>  
-  
   #Rename Name column 
   rename("Gene" = "Name")
-
-expression_data_long
 ```
 
-# Joining meta data and expression data
+Now we need to join the meta data with the count data. Since the samples and ID's match 1:1 we simply need to do a full join.
+
+## Joining meta data and count data
 
 ```{r}
-#| label: Metadata added
-
+#| label: Metadata joined to the count data
 
 # Connect the expression dataset Sample with the metadata set ID
-
-full_expression_data <- inner_join(x = expression_data_long, 
+full_reads_data <- full_join(x = reads_data_long, 
                                    y = meta_data, 
                                    join_by(Sample == ID))
 
-write_csv(full_expression_data, 
-          "../data/full_expression_data.csv")
-
+write_csv(full_reads_data, 
+          "../data/full_reads_data.csv")
 ```
