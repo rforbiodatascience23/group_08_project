@@ -56,20 +56,18 @@ editor: visual
       DESeq() |>
       #Set significant level as 0.05 and extract the result
       results(alpha = 0.05) |>
-      as_tibble(rownames = NA) |>
+      as_tibble(rownames = "Gene") |>
       #Extract those genes with log2FoldChange larger than 1 or smaller than -1
       filter(log2FoldChange > 1 | log2FoldChange < -1) |> 
-      rownames() #|>
-      #as.data.frame()
+      select(Gene)
 
     GSE182951_diffGenes_nonpCR_pre_post <- GSE182951_nonpCR |>
       DESeqDataSetFromMatrix(colData = col_nonpCR, ~factor(c(rep(c("pre", "post"), 14)))) |>
       DESeq() |>
       results(alpha = 0.05) |>
-      as.data.frame() |>
+      as_tibble(rownames = "Gene") |>
       filter(log2FoldChange > 1 | log2FoldChange < -1) |> 
-      rownames() |> 
-      as.data.frame()
+      select(Gene)
     #--------------------------------------END----------------------------------------------
 
 
