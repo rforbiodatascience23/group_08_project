@@ -6,11 +6,12 @@ editor: visual
 
 ```{r}
 library(tidyverse)
+#expression_data = read_csv("../data/_raw/expression_data.csv")
+
 ```
 
 ```{r}
 # First we explore the data
-#View(expression_data)
 expression_data |> 
   sample_n(10)
 ```

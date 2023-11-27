@@ -8,7 +8,6 @@ editor: visual
 
 ```{r}
 #| message: false
-
 library("tidyverse")
 library("readxl")
 ```
@@ -28,6 +27,11 @@ if (!file.exists(str_c(raw_dir, data_file))){
   }
 
 expression_data = read_excel(str_c(raw_dir, data_file))
+
+#View(expression_data)
+# Rewriting it as a csv
+#write_csv(expression_data_excel,str_c(raw_dir, "expression_data.csv"))
+
 ```
 
 # **Creating the metadata**
