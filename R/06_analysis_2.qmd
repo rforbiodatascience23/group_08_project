@@ -18,14 +18,14 @@ source("99_proj_func.R")
 ```
 
 ```{r}
-#string_database <- translate_database("string") 
+string_database <- translate_database("string") 
 
 # save on the first iteration
 # save(string_database, file = "../data/string_database.RData")
 
 load("../data/GSE182951_diff_nonpCR_pre_post_genes.RData")
 load("../data/GSE182951_diff_pCR_pre_post_genes.RData")
-load("../data/string_database.RData")
+# load("../data/string_database.RData")
 
 ```
 
@@ -101,11 +101,15 @@ graph_pCR <- graph_from_data_frame(
   directed = FALSE,
   vertices = node_attributes_pCR) # tibble with the attributes of the nodes in pCR includes relvance score
 
-# the three lines below make use of some base R as the transformation form igraph object to tibble, to use tidyverse functions, and back to igraph object was not working.
-graph_pCR_1_filtered <- relevance_filtering(
-  graph_pCR, 
-  0.8) # 0.8 is a standard valu inn this case but it is not a fixed value
+# The three lines below make use of some base R as the transformation form
+# igraph object to tibble, to use tidyverse functions, and back to igraph 
+# object was not working.
+
+graph_pCR_1_filtered <- graph_pCR |> 
+  relevance_filtering(0.8) # 0.8 is a standard value (not a fixed value)
+
 isolated_nodes_pCR <- which(degree(graph_pCR_1_filtered) == 0)
+
 graph_pCR_1_filtered_cleaned <- delete_vertices(
   graph_pCR_1_filtered,
   isolated_nodes_pCR)
@@ -119,10 +123,11 @@ graph_nonpCR <- graph_from_data_frame(
   directed = FALSE,
   vertices = node_attributes_nonpCR)
 
-graph_nonpCR_1_filtered <- relevance_filtering(
-  graph_nonpCR, 
-  0.8)
+graph_nonpCR_1_filtered <- graph_nonpCR |> 
+  relevance_filtering(0.8)
+
 isolated_nodes_nonpCR <- which(degree(graph_nonpCR_1_filtered) == 0)
+
 graph_nonpCR_1_filtered_cleaned <- delete_vertices(
   graph_nonpCR_1_filtered, 
   isolated_nodes_nonpCR)
@@ -260,3 +265,32 @@ results_list_nonpCR <- lapply(nonpCR_subcommunities, function(i) {
 # Rename the elements in results_list_pCR
 names(results_list_nonpCR) <- str_c("ORA_", nonpCR_subcommunities, "_community")
 ```
+
+#### Transforming the results to tibble
+
+
+This step takes the top 10, by adjusted p-value, over-represented biological process in each community and maps them to a tibble for each group pCR not pCR to aid in interpretation of the networks. 
+
+Just to note, the %>% pipe is used in both cases below after mutate as it brought up an error otherwise, which I was unable to solve, unfortunately. A different method might yield a better result.
+
+```{r}
+results_tibble_pCR <- results_list_pCR |>
+  map(as_tibble) |>
+  map(~ slice_head(.x, n = 10) |> mutate(row_number = row_number() - 1)) %>%
+  set_names(str_c("Community_", seq_along(.))) |>
+  enframe(name = "Community") |>
+  unnest(cols = "value")
+
+results_tibble_nonpCR <- results_list_nonpCR |> 
+  map(as_tibble) |> 
+  map(~ slice_head(.x, n = 10) |> mutate(row_number = row_number() - 1)) %>% 
+  set_names(str_c("Community_", seq_along(.))) |> 
+  enframe(name = "sublist") |> 
+  unnest(cols = "value")
+
+write_csv(results_tibble_pCR, "../data/ORA_pCR.csv")
+write_csv(results_tibble_nonpCR, "../data/ORA_nonpCR.csv")
+
+```
+
+
